@@ -142,23 +142,28 @@ class personHandler:
 
         return jsonify(Person=mapped_result)
 
-    def searchPeople(self, args, values):
+    def searchPeople(self, args):
         dao = PersonDAO
-        if args is 'first_Name':
-            param = args.get('first_name')
-            result = dao.getPeopleByFirstName(param)
-        elif args is 'last_Name':
-            param = args.get('last_name')
-            result = dao.getPeopleByLastName(param)
-        elif args is 'gender':
-            param = args.get('gender')
-            result = dao.getPeopleByGender(param)
-        elif args is 'email':
-            param = args.get('email')
-            result = dao.getPeopleByEmail(param)
-        elif args is 'phone_number':
-            param = args.get('phone_number')
-            result = dao.getPeopleByPhoneNumber(param)
+        # param = []
+        param1 = args.get('first_name')
+        param2 = args.get('last_name')
+        param3 = args.get('gender')
+        param4 = args.get('email')
+        param5 = args.get('phone_number')
+        print(param3)
+
+        if param1 is not None:
+            result = dao.getPeopleByFirstName(param1)
+        elif param2 is not None:
+                result = dao.getPeopleByLastName(param2)
+        elif param3 is not None:
+            result = dao.getPeopleByGender(param3)
+        elif param4 is not None:
+                result = dao.getPeopleByEmail(param4)
+        elif param5 is not None:
+            result = dao.getPeopleByPhoneNumber(param5)
+        else:
+            return jsonify(Error = "NOT FOUND"), 404
         mapped_result = []
         for r in result:
             mapped_result.append(self.build_person_dict(r))
@@ -167,10 +172,10 @@ class personHandler:
 
 
     def postPerson(self):
-        return jsonify (Created="CREATED"), 201
+        return jsonify (CreatePerson="CREATED"), 201
 
     def updatePerson(self):
-        return jsonify (Ok = "OK"), 200
+        return jsonify (UpdatePerson = "OK"), 200
 
     def deletePerson(self):
-        return jsonify (Ok = "OK"), 200
+        return jsonify (DeletePerson = "OK"), 200

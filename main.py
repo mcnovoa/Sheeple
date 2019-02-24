@@ -38,7 +38,6 @@ def getAllConvos():
 def gettAllPeople():
     if request.method == 'GET':
         if request.args:
-            print("value = ")
             return personHandler().searchPeople(request.args)
         else:
             handler = personHandler()
