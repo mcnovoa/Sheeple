@@ -144,23 +144,21 @@ class personHandler:
 
     def searchPeople(self, args):
         dao = PersonDAO
-        # param = []
         param1 = args.get('first_name')
         param2 = args.get('last_name')
         param3 = args.get('gender')
         param4 = args.get('email')
         param5 = args.get('phone_number')
-        print(param3)
 
-        if param1 is not None:
+        if param1:
             result = dao.getPeopleByFirstName(param1)
         elif param2 is not None:
                 result = dao.getPeopleByLastName(param2)
-        elif param3 is not None:
+        elif param3:
             result = dao.getPeopleByGender(param3)
-        elif param4 is not None:
+        elif param4:
                 result = dao.getPeopleByEmail(param4)
-        elif param5 is not None:
+        elif param5:
             result = dao.getPeopleByPhoneNumber(param5)
         else:
             return jsonify(Error = "NOT FOUND"), 404

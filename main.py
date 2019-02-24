@@ -45,7 +45,7 @@ def gettAllPeople():
     elif request.method == 'POST':
         return personHandler().postPerson()
     elif request.method == 'PUT':
-        return personHandler().updatePerson();
+        return personHandler().updatePerson()
     else:
         return personHandler().deletePerson()
 
