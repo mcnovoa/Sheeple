@@ -2,7 +2,7 @@ from flask import jsonify
 from daos.person import PersonDAO
 
 
-class PersonHandler:
+class personHandler:
 
     def build_person_dict(self, row):
         result = {}
