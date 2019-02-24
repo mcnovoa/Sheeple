@@ -142,7 +142,7 @@ class personHandler:
 
         return jsonify(Person=mapped_result)
 
-    def searchPeople(self, args):
+    def searchPeople(self, args, values):
         dao = PersonDAO
         if args is 'first_Name':
             param = args.get('first_name')
@@ -166,3 +166,11 @@ class personHandler:
         return jsonify(Person=mapped_result)
 
 
+    def postPerson(self):
+        return jsonify (Created="CREATED"), 201
+
+    def updatePerson(self):
+        return jsonify (Ok = "OK"), 200
+
+    def deletePerson(self):
+        return jsonify (Ok = "OK"), 200

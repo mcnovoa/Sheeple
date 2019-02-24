@@ -34,14 +34,21 @@ def getAllConvos():
 # @app.route('/Sheeple/contacts/')
 
 
-@app.route('/Sheeple/person', methods=['GET'])
+@app.route('/Sheeple/person', methods=['GET', 'POST', 'PUT', "DELETE"])
 def gettAllPeople():
-    if request.args:
-        print(request.args)
-        return personHandler().searchPeople(request.args)
+    if request.method == 'GET':
+        if request.args:
+            print("value = ")
+            return personHandler().searchPeople(request.args)
+        else:
+            handler = personHandler()
+            return handler.getAllPeople()
+    elif request.method == 'POST':
+        return personHandler().postPerson()
+    elif request.method == 'PUT':
+        return personHandler().updatePerson();
     else:
-        handler = personHandler()
-        return handler.getAllPeople()
+        return personHandler().deletePerson()
 
 
 @app.route('/Sheeple/person/<int:person_id>', methods=['GET'])
