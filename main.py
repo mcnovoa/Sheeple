@@ -1,18 +1,18 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS, cross_origin
-import handlers.convoHandler
+from handlers.convoHandler import convoHandler
 
 app = Flask(__name__)
 
 CORS(app)
 
 @app.route('/')
-def welcomeShepple():
-    return 'Shepple!'
+def welcomeSheeple():
+    return 'Sheeple!'
 
 #app.route(
 app.route('/Sheeple/conversations/', methods=['GET', 'POST', 'PUT', 'DELETE' ])
-    def getAllConvos():
+def getAllConvos():
         if request.method == 'POST':
             print("REQUEST: ", request.json)
             return convoHandler().insertConvoJson(request.json)
@@ -24,9 +24,9 @@ app.route('/Sheeple/conversations/', methods=['GET', 'POST', 'PUT', 'DELETE' ])
             return convoHandler().putConvoJson(request.json)
         else:
             if not request.args:
-            return convoHandler().getAllConvos()
-        else:
-            return convoHandler().searchConvos(request.args)
+                return convoHandler().getAllConvos()
+            else:
+                return convoHandler().searchConvos(request.args)
 
 
 
