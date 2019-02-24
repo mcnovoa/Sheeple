@@ -1,4 +1,5 @@
 from flask import jsonify
+from daos.convo import ConvoDAO
 
 
 class convoHandler:
@@ -8,6 +9,8 @@ class convoHandler:
         convo['convo_users'] = row[1]
         convo['convo_userAmounts'] = row[2]
         convo['admin_id'] = row[3]
+
+        return convo
 
     def build_post_dict(self, row):
         p = {}
@@ -30,9 +33,21 @@ class convoHandler:
         convo['admin_id'] = admin_id
 
     def getAllConvos(self):
-        convo_list = {}
-        result_list= {}
-        for row in convo_list:
-            result = self.build_convo_dict(row)
-            result_list.append(result)
-        return jsonify(Parts=result_list)
+        dao = ConvoDAO()
+        convos = dao.getAllConvos()
+        convomapped = []
+        for c in convos:
+            convomapped.append(self.build_convo_dict(c))
+
+        return jsonify(Convos=convomapped)
+
+
+        def getConvoById(self, id):
+            dao = ConvoDAO()
+            convo = dao.getConvoById(self,id)
+            if convo == None:
+                return jsonify(Error="NOT FOUND"), 404
+            else:
+                convomap = self.build_convo_dict(convo)
+
+        return jsonify(Convo=convomap)
