@@ -142,7 +142,27 @@ class personHandler:
 
         return jsonify(Person=mapped_result)
 
+    def searchPeople(self, args):
+        dao = PersonDAO
+        if args is 'first_Name':
+            param = args.get('first_name')
+            result = dao.getPeopleByFirstName(param)
+        elif args is 'last_Name':
+            param = args.get('last_name')
+            result = dao.getPeopleByLastName(param)
+        elif args is 'gender':
+            param = args.get('gender')
+            result = dao.getPeopleByGender(param)
+        elif args is 'email':
+            param = args.get('email')
+            result = dao.getPeopleByEmail(param)
+        elif args is 'phone_number':
+            param = args.get('phone_number')
+            result = dao.getPeopleByPhoneNumber(param)
+        mapped_result = []
+        for r in result:
+            mapped_result.append(self.build_person_dict(r))
 
-
+        return jsonify(Person=mapped_result)
 
 

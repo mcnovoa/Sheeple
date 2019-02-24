@@ -36,8 +36,18 @@ def getAllConvos():
 
 @app.route('/Sheeple/person', methods=['GET'])
 def gettAllPeople():
+    if request.args:
+        print(request.args)
+        return personHandler().searchPeople(request.args)
+    else:
+        handler = personHandler()
+        return handler.getAllPeople()
+
+
+@app.route('/Sheeple/person/<int:person_id>', methods=['GET'])
+def getPersonById(person_id):
     handler = personHandler()
-    return handler.getAllPeople()
+    return handler.getPersonByID(person_id)
 
 
 if __name__ == '__main__':
