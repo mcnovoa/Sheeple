@@ -16,12 +16,6 @@ def welcomesheeple():
     return 'Sheeple!'
 
 
-@app.route('/Sheeple/conversations', methods=['GET', 'POST', 'PUT', 'DELETE'])
-def getAllConvos():
-    handler = convoHandler()
-    return handler.getAllConvos()
-
-
 @app.route('/Sheeple/people', methods=['GET', 'POST', 'PUT', "DELETE"])
 def getAllPeople():
     if request.method == 'GET':
@@ -48,6 +42,13 @@ def getPersonById(person_id):
     else:
         return handler.getAllConvos()
 
+
+@app.route('/Sheeple/conversations', methods=['GET', 'POST', 'PUT', 'DELETE'])
+def getAllConvos():
+    handler = convoHandler()
+    return handler.getAllConvos()
+
+
 @app.route('/Sheeple/conversations/<int:convo_id>', methods=['GET', 'PUT', 'DELETE'])
 def getConvoById(convo_id):
      handler = convoHandler()
@@ -64,7 +65,7 @@ def getConvoById(convo_id):
 
 
 # @app.route('/Sheeple/conversations/<int:convo_id>/users', methods=['GET'])
-# def getAllUsers(convo_id):
+# def getAllConvoUsers(convo_id):
 #     handler = convoHandler()
 #     if request.method == 'GET':
 #         return handler.geAllUsers(convo_id)
@@ -86,6 +87,10 @@ def getAllUsers():
         return userHandler().deleteUser()
 
 
+@app.route('/Sheeple/users/<int:user_id>', methods=['GET'])
+def getUsersById(user_id):
+    handler = userHandler()
+    return handler.getUserByID(user_id)
 
 #--------------------------Start Replies------------------------#
 
@@ -134,11 +139,6 @@ def getAdminById(id):
     return handler.getAdminById(id)
 
 #----------------------------End Admins-----------------------#
-
-@app.route('/Sheeple/users/<int:user_id>', methods=['GET'])
-def getUsersById(user_id):
-    handler = userHandler()
-    return handler.getUserByID(user_id)
 
 
 @app.route('/Sheeple/contacts', methods=['GET', 'POST', 'PUT', "DELETE"])

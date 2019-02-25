@@ -1,4 +1,4 @@
-#from flask import psycopg2
+# import psycopg2
 
 
 class ContactDAO:
