@@ -3,7 +3,8 @@ from flask_cors import CORS, cross_origin
 from handlers.convoHandler import convoHandler
 from handlers.personHandler import personHandler
 from handlers.userHandler import userHandler
-
+from handlers.replyHandler import replyHandler
+from handlers.adminHandler import AdminHandler
 app = Flask(__name__)
 
 CORS(app)
@@ -84,10 +85,60 @@ def getAllUsers():
         return userHandler().deleteUser()
 
 
+
+#--------------------------Start Replies------------------------#
+
+@app.route('/Sheeple/posts/replies', methods=['GET', 'POST'])
+def searchReplies():
+    if request.method == 'POST':
+        print("REQUEST: ", request.json)
+        return 200
+
+    else:
+        handler = replyHandler()
+        if not request.args:
+            return handler.getAllReplies()
+        else:
+            return handler.searchReplies(request.args)
+
+
+@app.route('/Sheeple/posts/replies/<int:id>', methods=['GET'])
+def getRepliesById(id):
+    handler = replyHandler()
+    return handler.getReplyById(id)
+
+
+@app.route('/Sheeple/posts/replies/user/<int:userId>')
+def getRepliesByUserId(userId):
+    handler = replyHandler()
+    return handler.getReplyByUserId(userId)
+
+#----------------------------End Replies-----------------------#
+
+#----------------------------Start Admins----------------------#
+
+@app.route('/Sheeple/users/admins', methods=['GET'])
+def getAllAdmins():
+    if request.method == 'POST':
+        print("REQUEST: ", request.json)
+
+    else:
+        handler = AdminHandler()
+        return handler.getAllAdmins()
+
+
+@app.route('/Sheeple/users/admins/<int:id>', methods=['GET'])
+def getAdminById(id):
+    handler = AdminHandler()
+    return handler.getAdminById(id)
+
+#----------------------------End Admins-----------------------#
+
 @app.route('/Sheeple/users/<int:user_id>', methods=['GET'])
 def getUsersById(user_id):
     handler = userHandler()
     return handler.getUserByID(user_id)
+
 
 
 if __name__ == '__main__':
