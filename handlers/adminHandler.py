@@ -4,5 +4,12 @@ from flask import jsonify
 class AdminHandler:
     def build_admin_dict(row,self):
             admin = {}
-            result['admin_id'] = row[0]
+            admin['admin_id'] = row[0]
+
+            return admin
+
+    def getAllAdmins(self):
+        return self.admin
+
+
 
