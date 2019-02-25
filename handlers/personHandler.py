@@ -143,7 +143,7 @@ class personHandler:
         return jsonify(Person=mapped_result)
 
     def searchPeople(self, args):
-        dao = PersonDAO
+        dao = PersonDAO()
         param1 = args.get('first_name')
         param2 = args.get('last_name')
         param3 = args.get('gender')
@@ -152,7 +152,7 @@ class personHandler:
 
         if param1:
             result = dao.getPeopleByFirstName(param1)
-        elif param2 is not None:
+        elif param2:
                 result = dao.getPeopleByLastName(param2)
         elif param3:
             result = dao.getPeopleByGender(param3)
@@ -161,7 +161,7 @@ class personHandler:
         elif param5:
             result = dao.getPeopleByPhoneNumber(param5)
         else:
-            return jsonify(Error = "NOT FOUND"), 404
+            return jsonify(Error="NOT FOUND"), 404
         mapped_result = []
         for r in result:
             mapped_result.append(self.build_person_dict(r))
@@ -170,10 +170,10 @@ class personHandler:
 
 
     def postPerson(self):
-        return jsonify (CreatePerson="CREATED"), 201
+        return jsonify(CreatePerson="CREATED"), 201
 
     def updatePerson(self):
-        return jsonify (UpdatePerson = "OK"), 200
+        return jsonify(UpdatePerson = "OK"), 200
 
     def deletePerson(self):
-        return jsonify (DeletePerson = "OK"), 200
+        return jsonify(DeletePerson = "OK"), 200

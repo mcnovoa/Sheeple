@@ -25,7 +25,7 @@ class PersonDAO:
 
     def getPersonByID(self, id):
         for r in self.data:
-            if id == r[0]:
+            if id.__eq__(r[0]):
                 return r
 
         return None
@@ -41,7 +41,7 @@ class PersonDAO:
     def getPeopleByLastName(self, lastName):
         result = []
         for r in self.data:
-            if lastName == r[2]:
+            if lastName.__eq__(r[2]):
                 result.append(r)
 
         return result
@@ -49,7 +49,7 @@ class PersonDAO:
     def getPeopleByGender(self, gender):
         result = []
         for r in self.data:
-            if gender == r[3]:
+            if gender.__eq__(r[3]):
                 result.append(r)
 
         return result
@@ -57,7 +57,7 @@ class PersonDAO:
     def getPeopleByEmail(self, email):
         result = []
         for r in self.data:
-            if email == r[4]:
+            if email.__eq__(r[4]):
                 result.append(r)
 
         return result
@@ -65,7 +65,7 @@ class PersonDAO:
     def getPeopleByPhoneNumber(self, number):
         result = []
         for r in self.data:
-            if number == r[5]:
+            if number.__eq__(r[5]):
                 return r
 
         return None
