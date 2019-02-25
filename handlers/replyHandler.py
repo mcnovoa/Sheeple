@@ -36,19 +36,18 @@ class replyHandler:
             return jsonify(Reply=mapped)
 
     def searchReplies(self, args):
-        id = args.get("reply_id")
-        userId = args.get("user_id")
+        param1 = args.get("reply_id")
+        param2 = args.get("user_id")
         dao = ReplyDAO()
-        replies = []
-        if (len(args) == 1) and id:
-            replies = dao.getReplyById(id)
-        elif len(args) == 1 and userId:
-            replies = dao.getReplyByUserId(userId)
+
+        if param1:
+            replies = dao.getReplyById(param1)
+        elif param2:
+            replies = dao.getReplyByUserId(param2)
         else:
-            return jsonify(Error="Malformed query String"), 400
+            return jsonify(Error="NOT FOUND"), 404
 
         reply_list = []
         for row in replies:
-            result = self.build_reply_dict(row)
-            reply_list.append(result)
+            reply_list.append(self.build_reply_dict(row))
         return jsonify(Reply=reply_list)
