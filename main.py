@@ -5,6 +5,7 @@ from handlers.personHandler import personHandler
 from handlers.userHandler import userHandler
 from handlers.replyHandler import replyHandler
 from handlers.adminHandler import AdminHandler
+from handlers.contactHandler import ContactHandler
 app = Flask(__name__)
 
 CORS(app)
@@ -138,6 +139,28 @@ def getAdminById(id):
 def getUsersById(user_id):
     handler = userHandler()
     return handler.getUserByID(user_id)
+
+
+@app.route('/Sheeple/contacts', methods=['GET', 'POST', 'PUT', "DELETE"])
+def getAllContacts():
+    if request.method == 'GET':
+        if request.args:
+            return ContactHandler().searchContacts(request.args)
+        else:
+            handler = ContactHandler()
+            return handler.getAllContacts()
+    elif request.method == 'POST':
+        return ContactHandler().postContact()
+    elif request.method == 'PUT':
+        return ContactHandler().updateContact()
+    else:
+        return ContactHandler().deleteContact()
+
+
+@app.route('/Sheeple/contacts/<int:contact_id>', methods=['GET'])
+def getContactById(contact_id):
+    handler = ContactHandler()
+    return handler.getContactById(contact_id)
 
 
 
