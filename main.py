@@ -43,7 +43,7 @@ def searchReplies():
         if not request.args:
             return handler.getAllReplies()
         else:
-                return handler.searchReplies(request.args)
+            return handler.searchReplies(request.args)
 
 
 @app.route('/Sheeple/posts/replies/<int:id>', methods=['GET'])

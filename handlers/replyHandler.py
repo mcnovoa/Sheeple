@@ -36,16 +36,9 @@ class replyHandler:
             return jsonify(Reply=mapped)
 
     def searchReplies(self, args):
-        param1 = args.get("reply_id")
-        param2 = args.get("user_id")
+        param1 = args.get('user_id')
         dao = ReplyDAO()
-
-        if param1:
-            replies = dao.getReplyById(param1)
-        elif param2:
-            replies = dao.getReplyByUserId(param2)
-        else:
-            return jsonify(Error="NOT FOUND"), 404
+        replies = dao.getReplyByUserId(param1)
 
         reply_list = []
         for row in replies:

@@ -22,7 +22,8 @@ class ReplyDAO:
         return None
 
     def getReplyByUserId(self, userId):
+        result = []
         for row in self.replies:
-            if userId == row[1]:
-                return row
-        return None
+            if userId.__eq__(row[1]):
+                result.append(row)
+        return result
