@@ -43,3 +43,4 @@ class UserDAO:
                 result.append(r)
 
         return result
+
