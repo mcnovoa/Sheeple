@@ -59,6 +59,7 @@ class personHandler:
 
         return jsonify(Person=mapped_result)
 
+
     def postPerson(self):
         return jsonify(CreatePerson="CREATED"), 201
 
