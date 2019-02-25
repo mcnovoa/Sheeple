@@ -25,7 +25,7 @@ class PersonDAO:
 
     def getPersonByID(self, id):
         for r in self.data:
-            if id.__eq__(r[0]):
+            if id == r[0]:
                 return r
 
         return None
@@ -33,7 +33,7 @@ class PersonDAO:
     def getPeopleByFirstName(self, name):
         result = []
         for r in self.data:
-            if name == r[1]:
+            if name.__eq__(r[1]):
                 result.append(r)
 
         return result
