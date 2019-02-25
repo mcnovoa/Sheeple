@@ -2,6 +2,8 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS, cross_origin
 from handlers.convoHandler import convoHandler
 from handlers.personHandler import personHandler
+from handlers.userHandler import userHandler
+
 
 
 app = Flask(__name__)
@@ -34,8 +36,8 @@ def getAllConvos():
 # @app.route('/Sheeple/contacts/')
 
 
-@app.route('/Sheeple/person', methods=['GET', 'POST', 'PUT', "DELETE"])
-def gettAllPeople():
+@app.route('/Sheeple/people', methods=['GET', 'POST', 'PUT', "DELETE"])
+def getAllPeople():
     if request.method == 'GET':
         if request.args:
             return personHandler().searchPeople(request.args)
@@ -50,11 +52,33 @@ def gettAllPeople():
         return personHandler().deletePerson()
 
 
-
-@app.route('/Sheeple/person/<int:person_id>', methods=['GET'])
+@app.route('/Sheeple/people/<int:person_id>', methods=['GET'])
 def getPersonById(person_id):
     handler = personHandler()
     return handler.getPersonByID(person_id)
+
+
+@app.route('/Sheeple/users', methods=['GET', 'POST', 'PUT', "DELETE"])
+def getAllUsers():
+    if request.method == 'GET':
+        if request.args:
+            return userHandler().searchUsers(request.args)
+        else:
+            handler = userHandler()
+            return handler.getAllUsers()
+    elif request.method == 'POST':
+        return userHandler().postUser()
+    elif request.method == 'PUT':
+        return userHandler().updateUser()
+    else:
+        return userHandler().deleteUser()
+
+
+@app.route('/Sheeple/users/<int:user_id>', methods=['GET'])
+def getUsersById(user_id):
+    handler = userHandler()
+    return handler.getUserByID(user_id)
+
 
 if __name__ == '__main__':
     app.run()
