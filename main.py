@@ -50,6 +50,7 @@ def gettAllPeople():
         return personHandler().deletePerson()
 
 
+
 @app.route('/Sheeple/person/<int:person_id>', methods=['GET'])
 def getPersonById(person_id):
     handler = personHandler()
