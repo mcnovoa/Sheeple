@@ -17,7 +17,7 @@ class contactListHandler:
         result = dao.getAllContactLists()
         mapped_result = []
         for r in result:
-            mapped_result.append(self.build_user_dict(r))
+            mapped_result.append(self.build_contactList_dict(r))
 
         return jsonify(ContactList=mapped_result)
 
@@ -38,15 +38,24 @@ class contactListHandler:
         param3 = args.get('user_id')
 
         if param1:
-            result = dao.get(param1)
+            result = dao.getContactListsByContacts(param1)
         elif param2:
-                result = dao.getPeopleByLastName(param2)
+                result = dao.getContactListsByUserAmount(param2)
         elif param3:
-            result = dao.getPeopleByGender(param3)
+            result = dao.getContactListByUserID(param3)
         else:
             return jsonify(Error="NOT FOUND"), 404
         mapped_result = []
         for r in result:
             mapped_result.append(self.build_contactList_dict(r))
 
-        return jsonify(Person=mapped_result)
+        return jsonify(ContactList=mapped_result)
+
+    def postContactList(self):
+        return jsonify(CreateContactList="CREATED"), 201
+
+    def updateContactList(self):
+        return jsonify(UpdateContactList="OK"), 200
+
+    def deleteContactList(self):
+        return jsonify(DeleteContactList="OK"), 200

@@ -1,13 +1,13 @@
 # import psycopg2
 
+
 class contactListDAO:
 
     def __init__(self):
-        P1 = [1, [], 56, 3, 5]
+        P1 = [1, [], 56, 3]
         P2 = [2, [], 28, 6]
         P3 = [3, [], 199, 7]
         P4 = [4, [], 32, 8]
-
 
         self.data = []
         self.data.append(P1)
@@ -25,7 +25,7 @@ class contactListDAO:
 
         return None
 
-    def getContactListByContacts(self, id):
+    def getContactListsByContacts(self, id):
         result = []
         for r in self.data:
             if id == r[1]:
@@ -33,18 +33,18 @@ class contactListDAO:
 
         return r
 
-    def getContactsListByUserAmount(self, amount):
+    def getContactListsByUserAmount(self, amount):
         result = []
         for r in self.data:
-            if amount == r[2]:
+            if int(amount) == r[2]:
                 result.append(r)
 
         return result
 
-    def getContactsListByUserID(self, id):
+    def getContactListByUserID(self, id):
         result = []
         for r in self.data:
-            if id == r[3]:
+            if int(id) == r[3]:
                 result.append(r)
 
         return result
