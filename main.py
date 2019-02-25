@@ -31,6 +31,7 @@ def getAllConvos():
         #     else:
                  return convoHandler().searchConvos(request.args)
 
+#--------------------------Start Replies------------------------#
 
 @app.route('/Sheeple/posts/replies', methods=['GET', 'POST'])
 def searchReplies():
@@ -52,11 +53,15 @@ def getRepliesById(id):
     return handler.getReplyById(id)
 
 
+
 @app.route('/Sheeple/posts/replies/user/<int:userId>')
 def getRepliesByUserId(userId):
     handler = replyHandler()
     return handler.getReplyByUserId(userId)
 
+#----------------------------End Replies-----------------------#
+
+#----------------------------Start Admins----------------------#
 
 @app.route('/Sheeple/users/admins', methods=['GET'])
 def getAllAdmins():
@@ -68,10 +73,12 @@ def getAllAdmins():
         return handler.getAllAdmins()
 
 
-# @app.route('/Sheeple/users/admins/<int:id>', methods='GET')
-# def getAdminById(id):
-#     handler = AdminHandler()
-#     return handler.getAdminById()
+@app.route('/Sheeple/users/admins/<int:id>', methods=['GET'])
+def getAdminById(id):
+    handler = AdminHandler()
+    return handler.getAdminById(id)
+
+#----------------------------End Admins-----------------------#
 
 
 #@app.route('/Sheeple/contacts/')

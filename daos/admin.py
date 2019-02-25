@@ -15,7 +15,7 @@ class AdminDAO:
 
     def getAdminById(self, id):
         for row in self.admins:
-            if id == row[0]:
+            if int(id) == row[0]:
                 return row
         return None
 

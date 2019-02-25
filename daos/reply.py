@@ -15,15 +15,15 @@ class ReplyDAO:
     def getAllReplies(self):
         return self.replies
 
-    def getReplyById(self, id):
+    def getReplyById(self, reply_id):
         for r in self.replies:
-            if id == r[0]:
+            if reply_id == r[0]:
                 return r
         return None
 
-    def getReplyByUserId(self, userId):
+    def getReplyByUserId(self, user_Id):
         result = []
         for row in self.replies:
-            if userId.__eq__(row[1]):
+            if int(user_Id) == row[1]:
                 result.append(row)
         return result
