@@ -1,5 +1,6 @@
 import psycopg2
 
+
 class ConvoDAO:
     def __init__(self):
         CV1 = [1, [], 0, 4]
@@ -17,18 +18,23 @@ class ConvoDAO:
     def getAllConvos(self):
         return self.data
 
-
-    def getConvoById(self, id):
+    def getConvoById(self, convo_id):
         for c in self.data:
-            if id == c[0]:
+            if int(convo_id) == c[0]:
                 return c
         return None
 
-
     def searchByAdmin(self, admin_id):
         result = []
-        for ca in self.data:
-            if admin_id == ca[3]:
-                result.append(ca)
+        for c in self.data:
+            if int(admin_id) == c[3]:
+                result.append(c)
+        return result
+
+    def searchUserAmounts(self, convo_userAmounts):
+        result = []
+        for c in self.data:
+            if int(convo_userAmounts) == c[2]:
+                result.append(c)
         return result
 
