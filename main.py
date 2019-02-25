@@ -90,6 +90,8 @@ def doByMessageId(message_id):
     handler = messageHandler()
     if request.method == 'GET':
         return handler.getMessageById(message_id)
+    elif request.method == 'POST':
+        return handler.postMessage(message_id)
     elif request.method == 'PUT':
         return handler.updateMessage(message_id, request.form)
     elif request.method == 'DELETE':
@@ -100,7 +102,7 @@ def doByMessageId(message_id):
 #----------------------------End Messages----------------------------#
 
 
-#---------------------------Start Message----------------------------#
+#---------------------------Start Images----------------------------#
 @app.route('/Sheeple/images', methods=['GET'])
 def getAllImages():
         handler = imageHandler()
@@ -115,6 +117,8 @@ def doByImageId(image_id):
     handler = imageHandler()
     if request.method == 'GET':
         return handler.getImageById(image_id)
+    elif request.method == 'POST':
+        return handler.postImage(image_id)
     elif request.method == 'PUT':
         return handler.updateImage(image_id, request.form)
     elif request.method == 'DELETE':

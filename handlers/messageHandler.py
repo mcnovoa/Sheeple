@@ -69,7 +69,7 @@ class messageHandler:
     def deleteMessage(self, message_id):
         return jsonify(DeleteMessage="OK"), 200
 
-    def postMessage(self,message_id, admin_id):
+    def postMessage(self,message_id):
         return jsonify(CreateMessage="OK"), 201
 
 

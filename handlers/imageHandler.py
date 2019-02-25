@@ -69,7 +69,7 @@ class imageHandler:
     def deleteImage(self, image_id):
         return jsonify(DeleteImage="OK"), 200
 
-    def postImage(self,image_id, message_id):
+    def postImage(self,image_id):
         return jsonify(CreateImage="OK"), 201
 
 
