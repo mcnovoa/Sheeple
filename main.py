@@ -5,6 +5,7 @@ from handlers.personHandler import personHandler
 from handlers.userHandler import userHandler
 from handlers.replyHandler import replyHandler
 from handlers.adminHandler import AdminHandler
+from handlers.reactionHandler import reactionHandler
 app = Flask(__name__)
 
 CORS(app)
@@ -133,6 +134,36 @@ def getAdminById(id):
     return handler.getAdminById(id)
 
 #----------------------------End Admins-----------------------#
+
+#------------------------Start Reactions----------------------#
+
+
+@app.route('/Sheeple/reactions', methods=['GET','POST', 'PUT', 'DELETE'])
+def getAllReactions():
+    handler = reactionHandler()
+    if request.methods =='GET':
+        if not request.args:
+            return handler.getAllReactions()
+        else:
+            return handler.searchReactions()
+    # elif request.method == 'POST':
+    #     return handler.postReaction()
+    # elif request.method == 'PUT'
+    #     return handler.updateReaction()
+    # else:
+    #     return handler.deleteReacion()
+
+    return handler.getAllReactions()
+
+@app.route('/Sheeple/reactions/<int:id>')
+def getReactionById(id):
+    handler = reactionHandler
+    return handler.getReactionById(id)
+
+
+
+#--------------------------End Reactions-----------------------#
+
 
 @app.route('/Sheeple/users/<int:user_id>', methods=['GET'])
 def getUsersById(user_id):
