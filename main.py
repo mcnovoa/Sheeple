@@ -99,7 +99,7 @@ def doByMessageId(message_id):
     else:
         return jsonify(Error="Method not allowed."), 405
 
-#----------------------------End Messages----------------------------#
+#----------------------------End Messages---------------------------#
 
 
 #---------------------------Start Images----------------------------#
@@ -126,6 +126,7 @@ def doByImageId(image_id):
     else:
         return jsonify(Error="Method not allowed."), 405
 
+#---------------------------End Messages---------------------------#
 
 #---------------------------Start Users----------------------------#
 @app.route('/Sheeple/users', methods=['GET', 'POST', 'PUT', "DELETE"])
