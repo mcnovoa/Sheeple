@@ -86,10 +86,13 @@ class convoHandler:
         return jsonify(Conversation=convomap)
 
     def updateConvo(self, convo_id, form):
-        return self.getConvoById(convo_id), 200
+        return jsonify(UpdateConvo="OK"), 200
 
     def deleteConvo(self, convo_id):
-        return self.getConvoById(convo_id), 200
+        return jsonify(DeleteConvo="OK"), 200
+
+    def postConvo(self, convo_id):
+        return jsonify(CreateConvo="OK"), 201
 
     def getAllConvoUsers(self, convo_id):
         daoc = ConvoDAO()
@@ -105,8 +108,4 @@ class convoHandler:
                 if rconvo.__contains__(u):
                     result.append(u)
         return jsonify(Users=result)
-
-
-
-
 

@@ -6,6 +6,8 @@ from handlers.userHandler import userHandler
 from handlers.replyHandler import replyHandler
 from handlers.adminHandler import AdminHandler
 from handlers.contactHandler import ContactHandler
+from handlers.messageHandler import messageHandler
+from handlers.imageHandler import imageHandler
 app = Flask(__name__)
 
 CORS(app)
@@ -37,24 +39,24 @@ def getPersonById(person_id):
     handler = personHandler()
     return handler.getPersonByID(person_id)
 
+
+#--------------------------Start Conversations------------------------#
+@app.route('/Sheeple/conversations', methods=['GET'])
+def getAllConvos():
+    handler = convoHandler()
     if request.args:
         return handler.searchByArgs(request.args)
     else:
         return handler.getAllConvos()
 
 
-#--------------------------Start Conversations------------------------#
-@app.route('/Sheeple/conversations', methods=['GET', 'POST', 'PUT', 'DELETE'])
-def getAllConvos():
-    handler = convoHandler()
-    return handler.getAllConvos()
-
-
-@app.route('/Sheeple/conversations/<int:convo_id>', methods=['GET', 'PUT', 'DELETE'])
-def getConvoById(convo_id):
+@app.route('/Sheeple/conversations/<int:convo_id>', methods=['GET', 'POST','PUT', 'DELETE'])
+def doByConvoId(convo_id):
      handler = convoHandler()
      if request.method == 'GET':
         return convoHandler().getConvoById(convo_id)
+     elif request.method == 'POST':
+        return convoHandler().postConvo(convo_id)
      elif request.method == 'PUT':
         return convoHandler().updateConvo(convo_id, request.form)
      elif request.method == 'DELETE':
@@ -71,9 +73,55 @@ def getAllConvoUsers(convo_id):
      if request.method == 'GET':
          return handler.getAllConvoUsers(convo_id)
 
-#-------------------------End Conversations------------------------#
+#-------------------------End Conversations--------------------------#
 
 #---------------------------Start Message----------------------------#
+@app.route('/Sheeple/messages', methods=['GET'])
+def getAllMessages():
+        handler = messageHandler()
+        if request.args:
+            return handler.searchMessagesByArgs(request.args)
+        else:
+            return handler.getAllMessages()
+
+
+@app.route('/Sheeple/messages/<int:message_id>', methods=['GET', 'POST', 'PUT', 'DELETE'])
+def doByMessageId(message_id):
+    handler = messageHandler()
+    if request.method == 'GET':
+        return handler.getMessageById(message_id)
+    elif request.method == 'PUT':
+        return handler.updateMessage(message_id, request.form)
+    elif request.method == 'DELETE':
+        return handler.deleteMessage(message_id)
+    else:
+        return jsonify(Error="Method not allowed."), 405
+
+#----------------------------End Messages----------------------------#
+
+
+#---------------------------Start Message----------------------------#
+@app.route('/Sheeple/images', methods=['GET'])
+def getAllImages():
+        handler = imageHandler()
+        if request.args:
+            return handler.searchImagesByArgs(request.args)
+        else:
+            return handler.getAllImages()
+
+
+@app.route('/Sheeple/images/<int:image_id>', methods=['GET', 'POST', 'PUT', 'DELETE'])
+def doByImageId(image_id):
+    handler = imageHandler()
+    if request.method == 'GET':
+        return handler.getImageById(image_id)
+    elif request.method == 'PUT':
+        return handler.updateImage(image_id, request.form)
+    elif request.method == 'DELETE':
+        return handler.deleteImage(image_id)
+    else:
+        return jsonify(Error="Method not allowed."), 405
+
 
 #---------------------------Start Users----------------------------#
 @app.route('/Sheeple/users', methods=['GET', 'POST', 'PUT', "DELETE"])
