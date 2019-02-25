@@ -62,11 +62,11 @@ def getConvoById(convo_id):
          return handler.searchArgsById(convo_id, request.args)
 
 
-@app.route('/Sheeple/conversations/<int:convo_id>/users', methods=['GET'])
-def getAllUsers(convo_id):
-    handler = convoHandler()
-    if request.method == 'GET':
-        return handler.geAllUsers(convo_id)
+# @app.route('/Sheeple/conversations/<int:convo_id>/users', methods=['GET'])
+# def getAllUsers(convo_id):
+#     handler = convoHandler()
+#     if request.method == 'GET':
+#         return handler.geAllUsers(convo_id)
 
 
 @app.route('/Sheeple/users', methods=['GET', 'POST', 'PUT', "DELETE"])
