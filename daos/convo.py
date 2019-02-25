@@ -1,9 +1,12 @@
 #import psycopg2
+from daos.user import UserDAO
 
 
 class ConvoDAO:
     def __init__(self):
-        CV1 = [1, [], 0, 4]
+        daou = UserDAO().getAllUsers()
+
+        CV1 = [1, daou, 0, 4]
         CV2 = [2, [], 0, 3]
         CV3 = [3, [], 0, 2]
         CV4 = [4, [], 0, 1]

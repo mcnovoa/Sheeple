@@ -43,6 +43,7 @@ def getPersonById(person_id):
         return handler.getAllConvos()
 
 
+#--------------------------Start Conversations------------------------#
 @app.route('/Sheeple/conversations', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def getAllConvos():
     handler = convoHandler()
@@ -64,13 +65,17 @@ def getConvoById(convo_id):
          return handler.searchArgsById(convo_id, request.args)
 
 
-# @app.route('/Sheeple/conversations/<int:convo_id>/users', methods=['GET'])
-# def getAllConvoUsers(convo_id):
-#     handler = convoHandler()
-#     if request.method == 'GET':
-#         return handler.geAllUsers(convo_id)
+@app.route('/Sheeple/conversations/<int:convo_id>/users', methods=['GET'])
+def getAllConvoUsers(convo_id):
+     handler = convoHandler()
+     if request.method == 'GET':
+         return handler.getAllConvoUsers(convo_id)
 
+#-------------------------End Conversations------------------------#
 
+#---------------------------Start Message----------------------------#
+
+#---------------------------Start Users----------------------------#
 @app.route('/Sheeple/users', methods=['GET', 'POST', 'PUT', "DELETE"])
 def getAllUsers():
     if request.method == 'GET':
@@ -92,7 +97,9 @@ def getUsersById(user_id):
     handler = userHandler()
     return handler.getUserByID(user_id)
 
-#--------------------------Start Replies------------------------#
+#-------------------------Ends Users--------------------------#
+
+#------------------------Start Replies-------------------------#
 
 @app.route('/Sheeple/posts/replies', methods=['GET', 'POST'])
 def searchReplies():

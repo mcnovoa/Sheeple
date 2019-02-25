@@ -1,4 +1,5 @@
 from daos.convo import ConvoDAO
+from daos.user import UserDAO
 from flask import Flask, jsonify, request
 
 class convoHandler:
@@ -61,7 +62,7 @@ class convoHandler:
         dao = ConvoDAO()
 
         param1 = args.get('admin_id')
-        param3 = args.get('convo_userAmounts')
+        param2 = args.get('convo_userAmounts')
 
         if param1:
             result = dao.searchByAdmin(param1)
@@ -90,6 +91,22 @@ class convoHandler:
     def deleteConvo(self, convo_id):
         return self.getConvoById(convo_id), 200
 
- #   def getAllUsers(self, convo_id):
+    def getAllConvoUsers(self, convo_id):
+        daoc = ConvoDAO()
+        daou = UserDAO()
+        usr = daou.getAllUsers()
+        result = []
+        rconvo = daoc.getConvoById(convo_id)
+
+        if rconvo == None:
+            return jsonify(Error="NOT FOUND"), 404
+        else:
+            for u in usr:
+                if rconvo.__contains__(u):
+                    result.append(u)
+        return jsonify(Users=result)
+
+
+
 
 
