@@ -201,26 +201,26 @@ def getAdminById(id):
 #----------------------------End Admins-----------------------#
 
 
-@app.route('/Sheeple/contacts', methods=['GET', 'POST', 'PUT', "DELETE"])
+@app.route('/Sheeple/contacts', methods=['GET'])
 def getAllContacts():
+    if request.args:
+        return ContactHandler().searchContacts(request.args)
+    else:
+        handler = ContactHandler()
+        return handler.getAllContacts()
+
+
+@app.route('/Sheeple/contacts/<int:contact_id>', methods=['GET', 'POST', 'PUT', 'DELETE'])
+def doContactById(contact_id):
+    handler = ContactHandler()
     if request.method == 'GET':
-        if request.args:
-            return ContactHandler().searchContacts(request.args)
-        else:
-            handler = ContactHandler()
-            return handler.getAllContacts()
+        return handler.getContactById(contact_id)
     elif request.method == 'POST':
         return ContactHandler().postContact()
     elif request.method == 'PUT':
         return ContactHandler().updateContact()
     else:
         return ContactHandler().deleteContact()
-
-
-@app.route('/Sheeple/contacts/<int:contact_id>', methods=['GET'])
-def getContactById(contact_id):
-    handler = ContactHandler()
-    return handler.getContactById(contact_id)
 
 
 
