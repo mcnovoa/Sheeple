@@ -1,10 +1,10 @@
 class hashtagDAO:
 
     def __init__ (self):
-        H1 = [1,"#yasssss" ]
-        H2 = [2, "#queeeeen"]
-        H3 = [3, "#slaaaay"]
-        H4 = [4, "#metoo"]
+        H1 = [1,"yas"]
+        H2 = [2, "queeeeen"]
+        H3 = [3, "slaaaay"]
+        H4 = [4, "metoo"]
 
         self.hashtags = []
         self.hashtags.append(H1)
@@ -20,9 +20,11 @@ class hashtagDAO:
             if id == row[0]:
                 return row
 
-    def getHashtagbyContent(self, content):
+    def getHashtagByContent(self, content):
+        result = []
         for row in self.hashtags:
             if content == row[1]:
-                return row
+                result.append(row)
+        return result
 
 

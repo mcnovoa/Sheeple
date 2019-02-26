@@ -63,5 +63,5 @@ class reactionHandler:
     def updateReaction(self):
         return jsonify(UpdateReaction="OK"), 200
 
-    def deletePerson(self):
+    def deleteReaction(self):
         return jsonify(DeleteReaction="OK"), 200

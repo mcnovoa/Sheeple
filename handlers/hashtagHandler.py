@@ -39,18 +39,18 @@ class hashtagHandler:
         param1 = args.get('hashtag_id')
         param2 = args.get('content')
         dao = hashtagDAO()
-
+        print(param2)
         if param1:
             hashtags = dao.getHashtagById(param1)
         elif param2:
-            hashtags = dao.getReactionByType(param2)
+            hashtags = dao.getHashtagByContent(param2)
         else:
             return jsonify(Reaction="NOT FOUND"), 404
 
         hashtag_list = []
         for row in hashtags:
             hashtag_list.append(self.build_hashtag_dict(row))
-        return jsonify(Reply=hashtag_list)
+        return jsonify(Hashtag=hashtag_list)
 
     def postHashtag(self):
         return jsonify(CreateHashtag="CREATED"), 201

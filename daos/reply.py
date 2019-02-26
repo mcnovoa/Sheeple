@@ -17,13 +17,13 @@ class ReplyDAO:
 
     def getReplyById(self, reply_id):
         for r in self.replies:
-            if reply_id == r[0]:
+            if int(reply_id) == r[0]:
                 return r
         return None
 
     def getReplyByUserId(self, user_Id):
         result = []
         for row in self.replies:
-            if user_Id == row[1]:
+            if int(user_Id) == row[1]:
                 result.append(row)
         return result

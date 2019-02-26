@@ -258,7 +258,7 @@ def getAllReactions():
     handler = reactionHandler()
     if request.method == 'GET':
         if request.args:
-            return reactionHandler.searchReactions(request.args)
+            return handler.searchReactions(request.args)
         else:
             handler = reactionHandler()
             return handler.getAllReactions()
@@ -286,16 +286,16 @@ def getAllHashtags():
     handler = hashtagHandler()
     if request.method == 'GET':
         if request.args:
-            return hashtagHandler.searchHashtags(request.args)
+            return handler.searchHashtags(request.args)
         else:
             handler = hashtagHandler()
             return handler.getAllHashtags()
     elif request.method == 'POST':
-        return handler.postReaction()
+        return handler.postHashtag()
     elif request.method == 'PUT':
-        return handler.updateReaction()
+        return handler.updateHashtag()
     else:
-        return handler.deleteReaction()
+        return handler.deleteHashtag()
 
 
 

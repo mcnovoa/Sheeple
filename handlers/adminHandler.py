@@ -31,7 +31,7 @@ class adminHandler:
         dao = AdminDAO()
 
         if param1:
-            admins = dao.getAdminById(param1)
+            admins = dao.getAdminById(int(param1))
         else:
             return jsonify(Admin="NOT FOUND"), 404
 
