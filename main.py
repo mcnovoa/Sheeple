@@ -257,6 +257,11 @@ def doContactListById(contact_id):
     else:
         return handler.deleteContactList()
 
+
+@app.route('/Sheeple/ContactLists/deleteUser/<int:user_id>', methods=['DELETE'])
+def RemoveUserFromContactLists(user_id):
+    return jsonify(DeletedUser = 'OK'), 200
+
 #-------------------------End Contact Lists--------------------------#
 
 
