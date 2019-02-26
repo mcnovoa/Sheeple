@@ -1,12 +1,15 @@
 #import psycopg2
+from daos.user import UserDAO
 
 
 class ConvoDAO:
     def __init__(self):
-        CV1 = [1, [], 0, 4]
-        CV2 = [2, [], 0, 3]
-        CV3 = [3, [], 0, 2]
-        CV4 = [4, [], 0, 1]
+        daou = UserDAO().getAllUsers()
+
+        CV1 = [1, daou, len(daou), 4, 'Los Ganchos de Black']
+        CV2 = [2, [], 0, 3, 'Don Q Coco']
+        CV3 = [3, [], 0, 2, 'SweetPineapple']
+        CV4 = [4, [], 0, 1, 'Los Medalleros']
 
         self.data = []
         self.data.append(CV1)
@@ -17,6 +20,20 @@ class ConvoDAO:
 
     def getAllConvos(self):
         return self.data
+
+    def getAllConvoAmount(self, param2):
+        result = []
+        for c in self.data:
+            if int(param2) == c[2]:
+                result.append(c)
+        return result
+
+    def getAllConvoNames(self, param3):
+        result = []
+        for c in self.data:
+            if param3 == c[4]:
+                result.append(c)
+        return result
 
     def getConvoById(self, convo_id):
         for c in self.data:

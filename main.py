@@ -6,6 +6,10 @@ from handlers.userHandler import userHandler
 from handlers.replyHandler import replyHandler
 from handlers.adminHandler import AdminHandler
 from handlers.reactionHandler import reactionHandler
+from handlers.contactHandler import ContactHandler
+from handlers.messageHandler import messageHandler
+from handlers.imageHandler import imageHandler
+from handlers.postHandler import postHandler
 app = Flask(__name__)
 
 CORS(app)
@@ -14,12 +18,6 @@ CORS(app)
 @app.route('/')
 def welcomesheeple():
     return 'Sheeple!'
-
-
-@app.route('/Sheeple/conversations', methods=['GET', 'POST', 'PUT', 'DELETE'])
-def getAllConvos():
-    handler = convoHandler()
-    return handler.getAllConvos()
 
 
 @app.route('/Sheeple/people', methods=['GET', 'POST', 'PUT', "DELETE"])
@@ -43,33 +41,124 @@ def getPersonById(person_id):
     handler = personHandler()
     return handler.getPersonByID(person_id)
 
+
+#--------------------------Start Conversations------------------------#
+
+
+@app.route('/Sheeple/conversations', methods=['GET'])
+def getAllConvos():
+    handler = convoHandler()
     if request.args:
         return handler.searchByArgs(request.args)
     else:
         return handler.getAllConvos()
 
-@app.route('/Sheeple/conversations/<int:convo_id>', methods=['GET', 'PUT', 'DELETE'])
-def getConvoById(convo_id):
+
+@app.route('/Sheeple/conversations/<int:convo_id>', methods=['GET', 'POST','PUT', 'DELETE'])
+def doByConvoId(convo_id):
      handler = convoHandler()
      if request.method == 'GET':
         return convoHandler().getConvoById(convo_id)
+     elif request.method == 'POST':
+        return convoHandler().postConvo(convo_id)
      elif request.method == 'PUT':
         return convoHandler().updateConvo(convo_id, request.form)
      elif request.method == 'DELETE':
         return convoHandler().deleteConvo(convo_id)
      else:
         return jsonify(Error="Method not allowed."), 405
-     if request.args:
-         return handler.searchArgsById(convo_id, request.args)
 
 
 @app.route('/Sheeple/conversations/<int:convo_id>/users', methods=['GET'])
-def getAllUsers(convo_id):
-    handler = convoHandler()
+def getAllConvoUsers(convo_id):
+     handler = convoHandler()
+     if request.method == 'GET':
+         return handler.getAllConvoUsers(convo_id)
+
+#-------------------------End Conversations--------------------------#
+
+#---------------------------Start Post-------------------------------#
+
+
+@app.route('/Sheeple/posts/<int:post_id>', methods=['GET', 'POST','PUT', 'DELETE'])
+def doByPostId(post_id):
+     handler = postHandler()
+     if request.method == 'GET':
+        return handler.getPostById(post_id)
+     elif request.method == 'POST':
+        return handler.postPost(post_id)
+     elif request.method == 'PUT':
+        return handler.updatePost(post_id, request.form)
+     elif request.method == 'DELETE':
+        return handler.deletePost([post_id])
+     else:
+        return jsonify(Error="Method not allowed."), 405
+
+@app.route('/Sheeple/posts', methods=['GET'])
+def getAllPosts():
+    handler = postHandler()
+    if request.args:
+        return handler.searchByArgs(request.args)
+    else:
+        return handler.getAllPosts()
+
+#-----------------------------End Post-------------------------------#
+
+#--------------------------Start Message-----------------------------#
+
+@app.route('/Sheeple/messages', methods=['GET'])
+def getAllMessages():
+        handler = messageHandler()
+        if request.args:
+            return handler.searchMessagesByArgs(request.args)
+        else:
+            return handler.getAllMessages()
+
+
+@app.route('/Sheeple/messages/<int:message_id>', methods=['GET', 'POST', 'PUT', 'DELETE'])
+def doByMessageId(message_id):
+    handler = messageHandler()
     if request.method == 'GET':
-        return handler.geAllUsers(convo_id)
+        return handler.getMessageById(message_id)
+    elif request.method == 'POST':
+        return handler.postMessage(message_id)
+    elif request.method == 'PUT':
+        return handler.updateMessage(message_id, request.form)
+    elif request.method == 'DELETE':
+        return handler.deleteMessage(message_id)
+    else:
+        return jsonify(Error="Method not allowed."), 405
+
+#----------------------------End Messages---------------------------#
 
 
+#---------------------------Start Images----------------------------#
+@app.route('/Sheeple/images', methods=['GET'])
+def getAllImages():
+        handler = imageHandler()
+        if request.args:
+            return handler.searchImagesByArgs(request.args)
+        else:
+            return handler.getAllImages()
+
+
+@app.route('/Sheeple/images/<int:image_id>', methods=['GET', 'POST', 'PUT', 'DELETE'])
+def doByImageId(image_id):
+    handler = imageHandler()
+    if request.method == 'GET':
+        return handler.getImageById(image_id)
+    elif request.method == 'POST':
+        return handler.postImage(image_id)
+    elif request.method == 'PUT':
+        return handler.updateImage(image_id, request.form)
+    elif request.method == 'DELETE':
+        return handler.deleteImage(image_id)
+    else:
+        return jsonify(Error="Method not allowed."), 405
+
+#---------------------------End Messages---------------------------#
+
+#---------------------------Start Users----------------------------#
 @app.route('/Sheeple/users', methods=['GET', 'POST', 'PUT', "DELETE"])
 def getAllUsers():
     if request.method == 'GET':
@@ -86,8 +175,14 @@ def getAllUsers():
         return userHandler().deleteUser()
 
 
+@app.route('/Sheeple/users/<int:user_id>', methods=['GET'])
+def getUsersById(user_id):
+    handler = userHandler()
+    return handler.getUserByID(user_id)
 
-#--------------------------Start Replies------------------------#
+#-------------------------Ends Users--------------------------#
+
+#------------------------Start Replies-------------------------#
 
 @app.route('/Sheeple/posts/replies', methods=['GET', 'POST'])
 def searchReplies():
@@ -169,6 +264,27 @@ def getReactionById(id):
 def getUsersById(user_id):
     handler = userHandler()
     return handler.getUserByID(user_id)
+
+@app.route('/Sheeple/contacts', methods=['GET', 'POST', 'PUT', "DELETE"])
+def getAllContacts():
+    if request.method == 'GET':
+        if request.args:
+            return ContactHandler().searchContacts(request.args)
+        else:
+            handler = ContactHandler()
+            return handler.getAllContacts()
+    elif request.method == 'POST':
+        return ContactHandler().postContact()
+    elif request.method == 'PUT':
+        return ContactHandler().updateContact()
+    else:
+        return ContactHandler().deleteContact()
+
+
+@app.route('/Sheeple/contacts/<int:contact_id>', methods=['GET'])
+def getContactById(contact_id):
+    handler = ContactHandler()
+    return handler.getContactById(contact_id)
 
 
 

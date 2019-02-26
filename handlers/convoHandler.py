@@ -1,4 +1,5 @@
 from daos.convo import ConvoDAO
+from daos.user import UserDAO
 from flask import Flask, jsonify, request
 
 class convoHandler:
@@ -8,6 +9,7 @@ class convoHandler:
         convo['convo_users'] = row[1]
         convo['convo_userAmounts'] = row[2]
         convo['admin_id'] = row[3]
+        convo['convo_name'] = row[4]
 
         return convo
 
@@ -24,12 +26,13 @@ class convoHandler:
         p['reaction_amount'] = row[8]
         p['reply_amount'] = row[9]
 
-    def build_convo_attributes (convo_id, convo_users, convo_userAmounts, admin_id):
+    def build_convo_attributes (convo_id, convo_users, convo_userAmounts, admin_id, convo_name):
         convo = {}
         convo['convo_id'] = convo_id
         convo['convo_users'] = convo_users
         convo['convo_userAmounts'] = convo_userAmounts
         convo['admin_id'] = admin_id
+        convo['name'] = convo_name
 
     def getAllConvos(self):
         dao = ConvoDAO()
@@ -45,11 +48,14 @@ class convoHandler:
 
         param1 = args.get('admin_id')
         param2 = args.get('convo_userAmounts')
+        param3 = args.get('convo_name')
 
         if param1:
             result = dao.searchByAdmin(param1)
         elif param2:
-            result = dao.searchUserAmounts(param2)
+            result = dao.getAllConvoAmount(param2)
+        elif param3:
+            result = dao.getAllConvoNames(param3)
         else:
             return jsonify(Error="NOT FOUND"), 404
         mapped_result = []
@@ -57,22 +63,6 @@ class convoHandler:
             mapped_result.append(self.build_convo_dict(c))
         return jsonify(Conversations=mapped_result)
 
-    def searchArgsById(self,convo_id, args):
-        dao = ConvoDAO()
-
-        param1 = args.get('admin_id')
-        param3 = args.get('convo_userAmounts')
-
-        if param1:
-            result = dao.searchByAdmin(param1)
-        elif param2:
-            result = dao.getAllUsers()
-        else:
-            return jsonify(Error="NOT FOUND"), 404
-        mapped_result = []
-        for c in result:
-            mapped_result.append(self.build_convo_dict(c))
-        return jsonify(Conversations=mapped_result)
 
     def getConvoById(self, convo_id):
         dao = ConvoDAO()
@@ -85,11 +75,26 @@ class convoHandler:
         return jsonify(Conversation=convomap)
 
     def updateConvo(self, convo_id, form):
-        return self.getConvoById(convo_id), 200
+        return jsonify(UpdateConvo="OK"), 200
 
     def deleteConvo(self, convo_id):
-        return self.getConvoById(convo_id), 200
+        return jsonify(DeleteConvo="OK"), 200
 
- #   def getAllUsers(self, convo_id):
+    def postConvo(self, convo_id):
+        return jsonify(CreateConvo="OK"), 201
 
+    def getAllConvoUsers(self, convo_id):
+        daoc = ConvoDAO()
+        daou = UserDAO()
+        usr = daou.getAllUsers()
+        result = []
+        rconvo = daoc.getConvoById(convo_id)
+
+        if rconvo == None:
+            return jsonify(Error="NOT FOUND"), 404
+        else:
+            for u in usr:
+                if rconvo.__contains__(u):
+                    result.append(u)
+        return jsonify(Users=result)
 

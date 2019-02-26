@@ -50,7 +50,7 @@ class personHandler:
         elif param4:
                 result = dao.getPeopleByEmail(param4)
         elif param5:
-            result = dao.getPeopleByPhoneNumber(param5)
+            result = dao.getPeopleByPhoneNumber(str(param5))
         else:
             return jsonify(Error="NOT FOUND"), 404
         mapped_result = []
@@ -58,7 +58,6 @@ class personHandler:
             mapped_result.append(self.build_person_dict(r))
 
         return jsonify(Person=mapped_result)
-
 
     def postPerson(self):
         return jsonify(CreatePerson="CREATED"), 201
