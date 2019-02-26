@@ -8,6 +8,8 @@ from handlers.adminHandler import AdminHandler
 from handlers.contactHandler import ContactHandler
 from handlers.messageHandler import messageHandler
 from handlers.imageHandler import imageHandler
+from handlers.contactListHandler import contactListHandler
+
 app = Flask(__name__)
 
 CORS(app)
@@ -220,6 +222,27 @@ def doContactById(contact_id):
         return ContactHandler().updateContact()
     else:
         return ContactHandler().deleteContact()
+
+@app.route('/Sheeple/ContactLists', methods=['GET'])
+def getAllContactLists():
+    if request.args:
+        return contactListHandler().searchContactLists(request.args)
+    else:
+        handler = contactListHandler()
+        return handler.getAllContactLists()
+
+
+@app.route('/Sheeple/ContactLists/<int:contact_id>', methods=['GET', 'POST', 'PUT', 'DELETE'])
+def doContactListById(contact_id):
+    handler = contactListHandler()
+    if request.method == 'GET':
+        return handler.getContactListByID(contact_id)
+    elif request.method == 'POST':
+        return handler.postContactList()
+    elif request.method == 'PUT':
+        return handler.updateContactList()
+    else:
+        return handler.deleteContactList()
 
 
 
