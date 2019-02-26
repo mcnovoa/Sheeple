@@ -245,6 +245,5 @@ def doContactListById(contact_id):
         return handler.deleteContactList()
 
 
-
 if __name__ == '__main__':
     app.run()
