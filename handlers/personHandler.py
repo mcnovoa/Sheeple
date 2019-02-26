@@ -11,7 +11,8 @@ class personHandler:
         result['last_name'] = row[2]
         result['gender'] = row[3]
         result['email'] = row[4]
-        result['phone_number'] = row[5]
+        result['phone'] = row[5]
+
         return result
 
     def getAllPeople(self):
@@ -39,7 +40,7 @@ class personHandler:
         param2 = args.get('last_name')
         param3 = args.get('gender')
         param4 = args.get('email')
-        param5 = args.get('phone_number')
+        param5 = args.get('phone')
 
         if param1:
             result = dao.getPeopleByFirstName(param1)
@@ -50,7 +51,7 @@ class personHandler:
         elif param4:
                 result = dao.getPeopleByEmail(param4)
         elif param5:
-            result = dao.getPeopleByPhoneNumber(str(param5))
+            result = dao.getPersonByPhoneNumber(param5)
         else:
             return jsonify(Error="NOT FOUND"), 404
         mapped_result = []
