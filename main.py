@@ -4,8 +4,9 @@ from handlers.convoHandler import convoHandler
 from handlers.personHandler import personHandler
 from handlers.userHandler import userHandler
 from handlers.replyHandler import replyHandler
-from handlers.adminHandler import AdminHandler
+from handlers.adminHandler import adminHandler
 from handlers.reactionHandler import reactionHandler
+from handlers.hashtagHandler import hashtagHandler
 app = Flask(__name__)
 
 CORS(app)
@@ -63,11 +64,11 @@ def getConvoById(convo_id):
          return handler.searchArgsById(convo_id, request.args)
 
 
-@app.route('/Sheeple/conversations/<int:convo_id>/users', methods=['GET'])
-def getAllUsers(convo_id):
-    handler = convoHandler()
-    if request.method == 'GET':
-        return handler.geAllUsers(convo_id)
+# @app.route('/Sheeple/conversations/<int:convo_id>/users', methods=['GET'])
+# def getAllUsers(convo_id):
+#     handler = convoHandler()
+#     if request.method == 'GET':
+#         return handler.geAllUsers(convo_id)
 
 
 @app.route('/Sheeple/users', methods=['GET', 'POST', 'PUT', "DELETE"])
@@ -86,30 +87,30 @@ def getAllUsers():
         return userHandler().deleteUser()
 
 
-
 #--------------------------Start Replies------------------------#
-
-@app.route('/Sheeple/posts/replies', methods=['GET', 'POST'])
+@app.route('/Sheeple/replies', methods=['GET', 'POST','PUT','DELETE'])
 def searchReplies():
-    if request.method == 'POST':
-        print("REQUEST: ", request.json)
-        return 200
-
-    else:
-        handler = replyHandler()
-        if not request.args:
-            return handler.getAllReplies()
+    if request.method == 'GET':
+        if request.args:
+            return replyHandler().searchReplies(request.args)
         else:
-            return handler.searchReplies(request.args)
+            handler = replyHandler()
+            return handler.getAllReplies()
+    elif request.method == 'POST':
+        return replyHandler().postReply()
+    elif request.method == 'PUT':
+        return replyHandler().updateReply()
+    else:
+        return replyHandler().deleteReply()
 
 
-@app.route('/Sheeple/posts/replies/<int:id>', methods=['GET'])
+@app.route('/Sheeple/replies/<int:id>', methods=['GET'])
 def getRepliesById(id):
     handler = replyHandler()
     return handler.getReplyById(id)
 
 
-@app.route('/Sheeple/posts/replies/user/<int:userId>')
+@app.route('/Sheeple/replies/user/<int:userId>')
 def getRepliesByUserId(userId):
     handler = replyHandler()
     return handler.getReplyByUserId(userId)
@@ -118,19 +119,26 @@ def getRepliesByUserId(userId):
 
 #----------------------------Start Admins----------------------#
 
-@app.route('/Sheeple/users/admins', methods=['GET'])
-def getAllAdmins():
-    if request.method == 'POST':
-        print("REQUEST: ", request.json)
 
+@app.route('/Sheeple/users/admins', methods=['GET', 'POST', 'PUT', 'DELETE'])
+def searchAdmins():
+    handler = adminHandler()
+    if request.method == 'GET':
+        if request.args:
+            return handler.searchAdmins(request.args)
+        else:
+            return handler.getAllAdmins()
+    elif request.method == 'POST':
+        return adminHandler().postAdmin()
+    elif request.method == 'PUT':
+        return adminHandler().updateAdmin()
     else:
-        handler = AdminHandler()
-        return handler.getAllAdmins()
+        return adminHandler().deleteAdmin()
 
 
-@app.route('/Sheeple/users/admins/<int:id>', methods=['GET'])
+@app.route('/Sheeple/admins/<int:id>', methods=['GET'])
 def getAdminById(id):
-    handler = AdminHandler()
+    handler = adminHandler()
     return handler.getAdminById(id)
 
 #----------------------------End Admins-----------------------#
@@ -138,32 +146,58 @@ def getAdminById(id):
 #------------------------Start Reactions----------------------#
 
 
-@app.route('/Sheeple/reactions', methods=['GET','POST', 'PUT', 'DELETE'])
+@app.route('/Sheeple/reactions', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def getAllReactions():
     handler = reactionHandler()
-    if request.methods =='GET':
-        if not request.args:
-            return handler.getAllReactions()
+    if request.method == 'GET':
+        if request.args:
+            return reactionHandler.searchReactions(request.args)
         else:
-            return handler.searchReactions()
-    # elif request.method == 'POST':
-    #     return handler.postReaction()
-    # elif request.method == 'PUT'
-    #     return handler.updateReaction()
-    # else:
-    #     return handler.deleteReacion()
+            handler = reactionHandler()
+            return handler.getAllReactions()
+    elif request.method == 'POST':
+        return handler.postReaction()
+    elif request.method == 'PUT':
+        return handler.updateReaction()
+    else:
+        return handler.deleteReaction()
 
-    return handler.getAllReactions()
 
-@app.route('/Sheeple/reactions/<int:id>')
+
+@app.route('/Sheeple/reactions/<int:id>', methods=['GET'])
 def getReactionById(id):
-    handler = reactionHandler
+    handler = reactionHandler()
     return handler.getReactionById(id)
-
 
 
 #--------------------------End Reactions-----------------------#
 
+#------------------------Start Hashtag-------------------------#
+
+@app.route('/Sheeple/hashtags', methods=['GET', 'POST', 'PUT', 'DELETE'])
+def getAllHashtags():
+    handler = hashtagHandler()
+    if request.method == 'GET':
+        if request.args:
+            return hashtagHandler.searchHashtags(request.args)
+        else:
+            handler = hashtagHandler()
+            return handler.getAllHashtags()
+    elif request.method == 'POST':
+        return handler.postReaction()
+    elif request.method == 'PUT':
+        return handler.updateReaction()
+    else:
+        return handler.deleteReaction()
+
+
+
+@app.route('/Sheeple/hashtags/<int:id>', methods=['GET'])
+def getHashtagById(id):
+    handler = hashtagHandler()
+    return handler.getHashtagById(id)
+
+#------------------------End Hashtag---------------------------#
 
 @app.route('/Sheeple/users/<int:user_id>', methods=['GET'])
 def getUsersById(user_id):

@@ -15,7 +15,7 @@ class ReactionDAO:
 
     def getReactionById(self, id):
         for row in self.reactions:
-            if int(id) == row[0]:
+            if id == row[0]:
                 return row
 
     def getReactionByType(self, type):
