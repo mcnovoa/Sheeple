@@ -4,12 +4,12 @@
 class PersonDAO:
 
     def __init__(self):
-        P1 = [1, 'Maria', 'Novoa', 'F', 'mcnovoa@upr.com', '7877877777']
-        P2 = [2, 'Jonathan', 'Flechas', 'M', 'jmflechas@upr.com', '7877878888']
-        P3 = [3, 'Luis', 'Rivera', 'M', 'lmrivera@upr.com', '7877877878']
-        P4 = [4, 'Manuel', 'Rodriguez', 'M', 'mrodriguez@upr.com', '7877878787']
-        P5 = [5, 'Luis', 'Rivera', 'M', 'larivera@upr.com', '7878787878']
-        P6 = [6, 'Thalia', 'Rodriguez', 'F', 'tmrodriguez@upr.com', '7871234567']
+        P1 = [1, 'Maria', 'Novoa', 'F', 'mcnovoa@upr.com', '(787)787-7777']
+        P2 = [2, 'Jonathan', 'Flechas', 'M', 'jmflechas@upr.com', '(787)787-8888']
+        P3 = [3, 'Luis', 'Rivera', 'M', 'lmrivera@upr.com', '(787)787-7878']
+        P4 = [4, 'Manuel', 'Rodriguez', 'M', 'mrodriguez@upr.com', '(787)787-8787']
+        P5 = [5, 'Luis', 'Rivera', 'M', 'larivera@upr.com', '(787)878-7878']
+        P6 = [6, 'Thalia', 'Rodriguez', 'F', 'tmrodriguez@upr.com', '(787)123-4567']
 
         self.data = []
         self.data.append(P1)
@@ -62,12 +62,13 @@ class PersonDAO:
 
         return result
 
-    def getPeopleByPhoneNumber(self, number):
+    def getPersonByPhoneNumber(self, phone):
         result = []
         for r in self.data:
-            if number.__eq__(r[5]):
-                return r
+            if phone == (r[5]):
+                result.append(r)
 
-        return None
+        return result
+
 
 
