@@ -128,26 +128,26 @@ def doByImageId(image_id):
 #---------------------------End Messages---------------------------#
 
 #---------------------------Start Users----------------------------#
-@app.route('/Sheeple/users', methods=['GET', 'POST', 'PUT', "DELETE"])
+@app.route('/Sheeple/users', methods=['GET'])
 def getAllUsers():
+    if request.args:
+        return userHandler().searchUsers(request.args)
+    else:
+        handler = userHandler()
+        return handler.getAllUsers()
+
+
+@app.route('/Sheeple/users/<int:user_id>', methods=['GET', 'POST', 'PUT', 'DELETE'])
+def doUsersById(user_id):
     if request.method == 'GET':
-        if request.args:
-            return userHandler().searchUsers(request.args)
-        else:
-            handler = userHandler()
-            return handler.getAllUsers()
+        handler = userHandler()
+        return handler.getUserByID(user_id)
     elif request.method == 'POST':
         return userHandler().postUser()
     elif request.method == 'PUT':
         return userHandler().updateUser()
     else:
         return userHandler().deleteUser()
-
-
-@app.route('/Sheeple/users/<int:user_id>', methods=['GET'])
-def getUsersById(user_id):
-    handler = userHandler()
-    return handler.getUserByID(user_id)
 
 #-------------------------Ends Users--------------------------#
 
