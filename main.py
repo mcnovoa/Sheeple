@@ -8,6 +8,7 @@ from handlers.adminHandler import AdminHandler
 from handlers.contactHandler import ContactHandler
 from handlers.messageHandler import messageHandler
 from handlers.imageHandler import imageHandler
+from handlers.postHandler import postHandler
 app = Flask(__name__)
 
 CORS(app)
@@ -41,6 +42,8 @@ def getPersonById(person_id):
 
 
 #--------------------------Start Conversations------------------------#
+
+
 @app.route('/Sheeple/conversations', methods=['GET'])
 def getAllConvos():
     handler = convoHandler()
@@ -63,8 +66,6 @@ def doByConvoId(convo_id):
         return convoHandler().deleteConvo(convo_id)
      else:
         return jsonify(Error="Method not allowed."), 405
-     if request.args:
-         return handler.searchArgsById(convo_id, request.args)
 
 
 @app.route('/Sheeple/conversations/<int:convo_id>/users', methods=['GET'])
@@ -75,7 +76,33 @@ def getAllConvoUsers(convo_id):
 
 #-------------------------End Conversations--------------------------#
 
-#---------------------------Start Message----------------------------#
+#---------------------------Start Post-------------------------------#
+
+
+@app.route('/Sheeple/posts/<int:post_id>', methods=['GET', 'POST','PUT', 'DELETE'])
+def doByPostId(post_id):
+     handler = postHandler()
+     if request.method == 'GET':
+        return handler.getPostById(post_id)
+     elif request.method == 'POST':
+        return handler.postPost(post_id)
+     elif request.method == 'PUT':
+        return handler.updatePost(post_id, request.form)
+     elif request.method == 'DELETE':
+        return handler.deletePost([post_id])
+     else:
+        return jsonify(Error="Method not allowed."), 405
+
+@app.route('/Sheeple/posts', methods=['GET'])
+def getAllPosts():
+    handler = postHandler()
+    if request.args:
+        return handler.searchByArgs(request.args)
+    else:
+        return handler.getAllPosts()
+#--------------------------Start Message-----------------------------#
+
+
 @app.route('/Sheeple/messages', methods=['GET'])
 def getAllMessages():
         handler = messageHandler()
