@@ -4,17 +4,16 @@ class AdminDAO:
         A2 = [2]
         A3 = [3]
 
-        self.admins = []
-        self.admins.append(A1)
-        self.admins.append(A2)
-        self.admins.append(A3)
-
+        self.data = []
+        self.data.append(A1)
+        self.data.append(A2)
+        self.data.append(A3)
 
     def getAllAdmins(self):
-        return self.admins
+        return self.data
 
     def getAdminById(self, id):
-        for row in self.admins:
+        for row in self.data:
             if int(id) == row[0]:
                 return row
         return None

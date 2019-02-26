@@ -24,6 +24,6 @@ class ReplyDAO:
     def getReplyByUserId(self, user_Id):
         result = []
         for row in self.replies:
-            if int(user_Id) == row[1]:
+            if user_Id == row[1]:
                 result.append(row)
         return result

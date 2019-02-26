@@ -56,3 +56,12 @@ class reactionHandler:
         for row in reactions:
             reactions_list.append(self.build_reaction_dict(row))
         return jsonify(Reply=reactions_list)
+
+    def postReaction(self):
+        return jsonify(CreateReaction="CREATED"), 201
+
+    def updateReaction(self):
+        return jsonify(UpdateReaction="OK"), 200
+
+    def deletePerson(self):
+        return jsonify(DeleteReaction="OK"), 200
