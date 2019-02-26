@@ -18,27 +18,26 @@ def welcomesheeple():
     return 'Sheeple!'
 
 
-@app.route('/Sheeple/people', methods=['GET', 'POST', 'PUT', "DELETE"])
+@app.route('/Sheeple/people', methods=['GET'])
 def getAllPeople():
+    if request.args:
+        return personHandler().searchPeople(request.args)
+    else:
+        handler = personHandler()
+        return handler.getAllPeople()
+
+
+@app.route('/Sheeple/people/<int:person_id>', methods=['GET', 'POST', 'PUT', "DELETE"])
+def getPersonById(person_id):
+    handler = personHandler()
     if request.method == 'GET':
-        if request.args:
-            return personHandler().searchPeople(request.args)
-        else:
-            handler = personHandler()
-            return handler.getAllPeople()
+        return handler.getPersonByID(person_id)
     elif request.method == 'POST':
         return personHandler().postPerson()
     elif request.method == 'PUT':
         return personHandler().updatePerson()
     else:
         return personHandler().deletePerson()
-
-
-@app.route('/Sheeple/people/<int:person_id>', methods=['GET'])
-def getPersonById(person_id):
-    handler = personHandler()
-    return handler.getPersonByID(person_id)
-
 
 #--------------------------Start Conversations------------------------#
 @app.route('/Sheeple/conversations', methods=['GET'])
@@ -225,4 +224,4 @@ def doContactById(contact_id):
 
 
 if __name__ == '__main__':
-app.run()
+    app.run()
