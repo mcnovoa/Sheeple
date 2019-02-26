@@ -98,3 +98,6 @@ class convoHandler:
                     result.append(u)
         return jsonify(Users=result)
 
+    def replyPost(self, convo_id, post_id, reply_content):
+        return jsonify(ReplyPost="OK"), 200
+

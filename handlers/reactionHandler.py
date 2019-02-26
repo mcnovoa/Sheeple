@@ -17,7 +17,7 @@ class reactionHandler:
         mapped_reactions = []
         for row in reactions:
             mapped_reactions.append(self.build_reaction_dict(row))
-        return jsonify(Reply=mapped_reactions)
+        return jsonify(Reactions=mapped_reactions)
 
     def getReactionById(self, id):
         dao = ReactionDAO()
@@ -26,7 +26,7 @@ class reactionHandler:
             return jsonify(Error="Not Found"), 404
         else:
             mapped = self.build_reaction_dict(reaction)
-            return jsonify(Reply=mapped)
+            return jsonify(Reactions=mapped)
 
     def getReactionByUserId(self, userId):
         dao = ReactionDAO()
@@ -35,7 +35,7 @@ class reactionHandler:
             return jsonify(Error="Not Found"), 404
         else:
             mapped = self.build_reaction_dict(reactions)
-            return jsonify(Reply=mapped)
+            return jsonify(Reactions=mapped)
 
     def searchReactions(self, args):
         param1 = args.get('reaction_id')

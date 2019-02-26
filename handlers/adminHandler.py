@@ -24,7 +24,7 @@ class adminHandler:
             return jsonify(Error="Not Found"), 404
         else:
             mapped = self.build_admin_dict(admin)
-            return jsonify(Admini=mapped)
+            return jsonify(Admin=mapped)
 
     def searchAdmins(self, args):
         param1 = args.get('admin_id')

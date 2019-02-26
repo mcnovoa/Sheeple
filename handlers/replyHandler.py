@@ -15,7 +15,7 @@ class replyHandler:
         mapped_replies = []
         for row in replies:
             mapped_replies.append(self.build_reply_dict(row))
-        return jsonify(Reply=mapped_replies)
+        return jsonify(Replies=mapped_replies)
 
     def getReplyById(self, id):
         dao = ReplyDAO()
@@ -38,12 +38,15 @@ class replyHandler:
     def searchReplies(self, args):
         param1 = args.get('user_id')
         dao = ReplyDAO()
-        replies = dao.getReplyByUserId(param1)
 
+        if param1:
+            replies = dao.getReplyByUserId(param1)
+        else:
+            return jsonify(Error="NOT FOUND"), 404
         reply_list = []
         for row in replies:
             reply_list.append(self.build_reply_dict(row))
-        return jsonify(Reply=reply_list)
+        return jsonify(Replies=reply_list)
 
     def postReply(self):
         return jsonify(CreatePerson="CREATED"), 201

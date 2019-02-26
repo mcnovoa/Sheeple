@@ -98,8 +98,16 @@ class postHandler:
     def deletePost(self, post_id):
         return jsonify(DeletePost="OK"), 200
 
-    def postPost(self, post_id):
+    def postPost(self, post_id, post_content, user_id, convo_id):
         return jsonify(CreatePost="OK"), 201
+
+    def reactPost(self, post_id, type, user_id):
+        if type == 'like':
+         return jsonify(LikePost="OK"), 200
+        elif type == 'dislike':
+           return jsonify(DislikePost="OK"), 200
+        else:
+            return jsonify(Error="Reaction not allowed."), 405
 
 
 
