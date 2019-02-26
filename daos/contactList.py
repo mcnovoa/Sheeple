@@ -1,13 +1,18 @@
 # import psycopg2
+from daos.contact import ContactDAO
+
 
 
 class contactListDAO:
 
     def __init__(self):
-        P1 = [1, [], 56, 3]
-        P2 = [2, [], 28, 6]
-        P3 = [3, [], 199, 7]
-        P4 = [4, [], 32, 8]
+        dao1 = ContactDAO().getAllContacts()
+        dao2 = ContactDAO().getContactsByContactName('mcnovoa')
+        dao3 = ContactDAO().getContactsByContactName('Zernin')
+        P1 = [1, dao1, 56, 3]
+        P2 = [2, dao2, 28, 6]
+        P3 = [3, dao1, 199, 7]
+        P4 = [4, dao3, 32, 8]
 
         self.data = []
         self.data.append(P1)

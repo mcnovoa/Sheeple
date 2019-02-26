@@ -1,6 +1,7 @@
 # import psycopg2
 
 
+
 class ContactDAO:
     def __init__(self):
         P1 = [6, 'mcnovoa']

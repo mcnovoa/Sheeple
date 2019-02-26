@@ -19,6 +19,8 @@ CORS(app)
 def welcomesheeple():
     return 'Sheeple!'
 
+#--------------------------Start People------------------------#
+
 
 @app.route('/Sheeple/people', methods=['GET'])
 def getAllPeople():
@@ -40,6 +42,9 @@ def getPersonById(person_id):
         return personHandler().updatePerson()
     else:
         return personHandler().deletePerson()
+
+#-------------------------End Conversations--------------------------#
+
 
 #--------------------------Start Conversations------------------------#
 @app.route('/Sheeple/conversations', methods=['GET'])
@@ -202,6 +207,9 @@ def getAdminById(id):
 #----------------------------End Admins-----------------------#
 
 
+#---------------------------Start Contacts----------------------------#
+
+
 @app.route('/Sheeple/contacts', methods=['GET'])
 def getAllContacts():
     if request.args:
@@ -223,6 +231,11 @@ def doContactById(contact_id):
     else:
         return ContactHandler().deleteContact()
 
+#-------------------------End Contacts--------------------------#
+
+#---------------------------Start Contact Lists----------------------------#
+
+
 @app.route('/Sheeple/ContactLists', methods=['GET'])
 def getAllContactLists():
     if request.args:
@@ -243,6 +256,8 @@ def doContactListById(contact_id):
         return handler.updateContactList()
     else:
         return handler.deleteContactList()
+
+#-------------------------End Contact Lists--------------------------#
 
 
 if __name__ == '__main__':

@@ -65,7 +65,7 @@ class PersonDAO:
     def getPeopleByPhoneNumber(self, number):
         result = []
         for r in self.data:
-            if number.__eq__(r[5]):
+            if str(number).__eq__(r[5]):
                 return r
 
         return None
