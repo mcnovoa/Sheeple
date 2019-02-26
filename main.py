@@ -18,26 +18,26 @@ def welcomesheeple():
     return 'Sheeple!'
 
 
-@app.route('/Sheeple/people', methods=['GET'])
+@app.route('/Sheeple/people', methods=['GET', 'POST', 'PUT', "DELETE"])
 def getAllPeople():
-    if request.args:
-        return personHandler().searchPeople(request.args)
-    else:
-        handler = personHandler()
-        return handler.getAllPeople()
-
-
-@app.route('/Sheeple/people/<int:person_id>', methods=['GET', 'POST', 'PUT', "DELETE"])
-def getPersonById(person_id):
-    handler = personHandler()
     if request.method == 'GET':
-        return handler.getPersonByID(person_id)
+        if request.args:
+            return personHandler().searchPeople(request.args)
+        else:
+            handler = personHandler()
+            return handler.getAllPeople()
     elif request.method == 'POST':
         return personHandler().postPerson()
     elif request.method == 'PUT':
         return personHandler().updatePerson()
     else:
         return personHandler().deletePerson()
+
+
+@app.route('/Sheeple/people/<int:person_id>', methods=['GET'])
+def getPersonById(person_id):
+    handler = personHandler()
+    return handler.getPersonByID(person_id)
 
 
 #--------------------------Start Conversations------------------------#
@@ -129,26 +129,26 @@ def doByImageId(image_id):
 #---------------------------End Messages---------------------------#
 
 #---------------------------Start Users----------------------------#
-@app.route('/Sheeple/users', methods=['GET'])
+@app.route('/Sheeple/users', methods=['GET', 'POST', 'PUT', "DELETE"])
 def getAllUsers():
-    if request.args:
-        return userHandler().searchUsers(request.args)
-    else:
-        handler = userHandler()
-        return handler.getAllUsers()
-
-
-@app.route('/Sheeple/users/<int:user_id>', methods=['GET', 'POST', 'PUT', 'DELETE'])
-def doUsersById(user_id):
     if request.method == 'GET':
-        handler = userHandler()
-        return handler.getUserByID(user_id)
+        if request.args:
+            return userHandler().searchUsers(request.args)
+        else:
+            handler = userHandler()
+            return handler.getAllUsers()
     elif request.method == 'POST':
         return userHandler().postUser()
     elif request.method == 'PUT':
         return userHandler().updateUser()
     else:
         return userHandler().deleteUser()
+
+
+@app.route('/Sheeple/users/<int:user_id>', methods=['GET'])
+def getUsersById(user_id):
+    handler = userHandler()
+    return handler.getUserByID(user_id)
 
 #-------------------------Ends Users--------------------------#
 
@@ -201,20 +201,14 @@ def getAdminById(id):
 #----------------------------End Admins-----------------------#
 
 
-@app.route('/Sheeple/contacts', methods=['GET'])
+@app.route('/Sheeple/contacts', methods=['GET', 'POST', 'PUT', "DELETE"])
 def getAllContacts():
-    if request.args:
-        return ContactHandler().searchContacts(request.args)
-    else:
-        handler = ContactHandler()
-        return handler.getAllContacts()
-
-
-@app.route('/Sheeple/contacts/<int:contact_id>', methods=['GET', 'POST', 'PUT', 'DELETE'])
-def doContactById(contact_id):
-    handler = ContactHandler()
     if request.method == 'GET':
-        return handler.getContactById(contact_id)
+        if request.args:
+            return ContactHandler().searchContacts(request.args)
+        else:
+            handler = ContactHandler()
+            return handler.getAllContacts()
     elif request.method == 'POST':
         return ContactHandler().postContact()
     elif request.method == 'PUT':
@@ -223,6 +217,12 @@ def doContactById(contact_id):
         return ContactHandler().deleteContact()
 
 
+@app.route('/Sheeple/contacts/<int:contact_id>', methods=['GET'])
+def getContactById(contact_id):
+    handler = ContactHandler()
+    return handler.getContactById(contact_id)
+
+
 
 if __name__ == '__main__':
-    app.run()
+app.run()
