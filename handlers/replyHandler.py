@@ -44,3 +44,12 @@ class replyHandler:
         for row in replies:
             reply_list.append(self.build_reply_dict(row))
         return jsonify(Reply=reply_list)
+
+    def postReply(self):
+        return jsonify(CreatePerson="CREATED"), 201
+
+    def updateReply(self):
+        return jsonify(UpdatePerson="OK"), 200
+
+    def deleteReply(self):
+        return jsonify(DeletePerson="OK"), 200
