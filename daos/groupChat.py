@@ -1,8 +1,8 @@
-#import psycopg2
+import psycopg2
 from daos.user import UserDAO
 
 
-class ConvoDAO:
+class GroupChatDAO:
     def __init__(self):
         daou = UserDAO().getAllUsers()
 
@@ -18,40 +18,27 @@ class ConvoDAO:
         self.data.append(CV4)
 
 
-    def getAllConvos(self):
+    def getAllGroupChats(self):
         return self.data
 
-    def getAllConvoAmount(self, param2):
+    def getAllGroupChats(self, param2):
         result = []
         for c in self.data:
             if int(param2) == c[2]:
                 result.append(c)
         return result
 
-    def getAllConvoNames(self, param3):
+    def getAllGroupChatNames(self, param3):
         result = []
         for c in self.data:
             if param3 == c[4]:
                 result.append(c)
         return result
 
-    def getConvoById(self, convo_id):
+    def getGroupChatsById(self, gc_id):
         for c in self.data:
-            if int(convo_id) == c[0]:
+            if int(gc_id) == c[0]:
                 return c
         return None
 
-    def searchByAdmin(self, admin_id):
-        result = []
-        for c in self.data:
-            if int(admin_id) == c[3]:
-                result.append(c)
-        return result
-
-    def searchUserAmounts(self, convo_userAmounts):
-        result = []
-        for c in self.data:
-            if int(convo_userAmounts) == c[2]:
-                result.append(c)
-        return result
 

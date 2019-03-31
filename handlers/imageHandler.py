@@ -16,7 +16,7 @@ class imageHandler:
         p['post_content'] = row[1]
         p['post_date'] = row[2]
         p['user_id'] = row[3]
-        p['convo_id'] = row[4]
+        p['gc_id'] = row[4]
         p['hashtag_id'] = row[5]
         p['reaction_id'] = row[6]
         p['reply_id'] = row[7]
@@ -24,9 +24,9 @@ class imageHandler:
         p['reply_amount'] = row[9]
 
     def build_image_attributes (image_id, message_id):
-        convo = {}
-        convo['image_id'] = image_id
-        convo['message_id'] = message_id
+        groupchat = {}
+        groupchat['image_id'] = image_id
+        groupchat['message_id'] = message_id
 
 
     def getAllImages(self):

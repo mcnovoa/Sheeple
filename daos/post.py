@@ -50,7 +50,7 @@ class PostDAO:
         return result
 
 
-    def getPostConvo(self, param4):
+    def getPostGroupChat(self, param4):
         result = []
         for p in self.data:
             if int(param4) == p[4]:
