@@ -18,6 +18,8 @@ class GroupChatDAO:
         self.data.append(CV4)
 
 
+
+
     def getAllGroupChats(self):
         return self.data
 
