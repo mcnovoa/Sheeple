@@ -17,6 +17,70 @@ def welcomesheeple():
     return 'Sheeple!'
 
 
+# --------------------------Overview---------------------------#
+@app.route('/Sheeple/users?<string: username>&<string:password>&<string:first_name>&<string:last_name>&<char:gender>&<string:email>&<string:phone_number>', methods=['POST'])
+
+
+@app.route('/Sheeple/login?<string:username>&<string:password', methods=['POST'])
+
+
+@app.route('/Sheeple/groupchat?<string:gc_name>&<string:user_id>', methods=['POST', 'DELETE'])
+
+
+@app.route('/Sheeple/contactlist/<int:cl_id>/<int:user_id>', methods=['POST', 'DELETE'])
+
+
+@app.route('/Sheeple/groupchat/<int:gc_id>', methods=['DELETE'])
+
+
+@app.route('/Sheeple/posts/<int:gc_id>?<string:image_url>&<string:post_content>', methods=['POST'])
+
+
+@app.route('/Sheeple/images', methods=['GET'])
+
+
+@app.route('/Sheeple/images/<int:gc_id>/<string:reaction_type>/<int:image_id>', methods= ['POST'])
+
+
+@app.route('/Sheeple/posts/<int:gc_id>/<int:image_id>?<string:post_content>', methods= ['POST'])
+
+
+# ------------------- ----Second Phase-------------------------#
+
+@app.route('/Sheeple/images', methods=['GET'])
+
+
+@app.route('/Sheeple/posts/<string:reaction_type>/<int:post_id>', methods=['GET'])
+
+
+@app.route('/Sheeple/users/<string:reaction_type>/<int:post_id>', methods=['GET'])
+
+
+@app.route('/Sheeple/contactlist/user_id', methods= ['GET'])
+
+
+@app.route('/Sheeple/posts/gc_id', methods= ['GET'])
+
+
+@app.route('/Sheeple/users/gc_id', methods= ['GET'])
+
+
+@app.route('/Sheeple/users', methods= ['GET'])
+
+
+@app.route('/Sheeple/groupchat', methods= ['GET'])
+
+
+@app.route('/Sheeple/owner/gc_id', methods= ['GET'])
+
+
+@app.route('/Sheeple/users/<int:user_id>', methods= ['GET'])
+
+
+@app.route('/Sheeple/users?<string:username>', methods=['GET'])
+
+
+
 # --------------------Start Contact Lists----------------------#
 
 @app.route('/Sheeple/ContactLists', methods=['GET'])
