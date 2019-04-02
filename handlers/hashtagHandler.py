@@ -1,4 +1,5 @@
 from flask import jsonify
+
 from daos.hashtag import hashtagDAO
 
 

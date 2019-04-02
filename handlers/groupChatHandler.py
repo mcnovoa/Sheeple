@@ -1,6 +1,7 @@
+from flask import jsonify
+
 from daos.groupChat import GroupChatDAO
 from daos.user import UserDAO
-from flask import Flask, jsonify, request
 
 
 class groupChatHandler:

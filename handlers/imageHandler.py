@@ -1,6 +1,7 @@
+from flask import jsonify
+
 from daos.image import ImageDAO
-from daos.user import UserDAO
-from flask import Flask, jsonify, request
+
 
 class imageHandler:
     def build_image_dict(self, row):

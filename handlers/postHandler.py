@@ -1,6 +1,7 @@
+from flask import jsonify
+
 from daos.post import PostDAO
 
-from flask import Flask, jsonify, request
 
 class postHandler:
 

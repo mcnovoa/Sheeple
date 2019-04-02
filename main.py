@@ -1,11 +1,12 @@
 from flask import Flask, jsonify, request
-from flask_cors import CORS, cross_origin
+from flask_cors import CORS
+
+from handlers.contactListHandler import contactListHandler
 from handlers.groupChatHandler import groupChatHandler
-from handlers.userHandler import userHandler
+from handlers.hashtagHandler import hashtagHandler
 from handlers.imageHandler import imageHandler
 from handlers.postHandler import postHandler
-from handlers.contactListHandler import contactListHandler
-from handlers.hashtagHandler import hashtagHandler
+from handlers.userHandler import userHandler
 
 app = Flask(__name__)
 

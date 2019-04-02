@@ -1,4 +1,3 @@
-import psycopg2
 from daos.user import UserDAO
 
 

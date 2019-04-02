@@ -1,4 +1,5 @@
 from flask import jsonify
+
 from daos.user import UserDAO
 
 
