@@ -1,5 +1,5 @@
 pg_config = {
-    'user' : 'sheep',
+    'user' : 'marianovoa1',
     'passwd' : 'minix',
     'dbname' : 'sheepledb'
 }
