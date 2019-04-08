@@ -1,6 +1,5 @@
 import psycopg2
-
-from sheepledb.dbConfig import pg_config
+from sheepledb.dbconfig import pg_config
 
 
 class UserDAO:
