@@ -1,55 +1,67 @@
 import psycopg2
-
+from sheepledb.dbconfig import pg_config
 
 
 
 class contactListDAO:
 
     def __init__(self):
-        dao1 = ContactDAO().getAllContacts()
-        dao2 = ContactDAO().getContactsByContactName('mcnovoa')
-        dao3 = ContactDAO().getContactsByContactName('Zernin')
-        P1 = [1, dao1, 56, 3]
-        P2 = [2, dao2, 28, 6]
-        P3 = [3, dao1, 199, 7]
-        P4 = [4, dao3, 32, 8]
-
-        self.data = []
-        self.data.append(P1)
-        self.data.append(P2)
-        self.data.append(P3)
-        self.data.append(P4)
+        connection_url = "dbname=%s user=%s password=%s" % (pg_config['dbname'],
+                                                            pg_config['user'],
+                                                            pg_config['passwd'])
+        self.conn = psycopg2._connect(connection_url)
 
     def getAllContactLists(self):
-        return self.data
+        cursor = self.conn.cursor()
+        query = "select cl_id, owner_id from ContactList;"
+        cursor.execute(query)
+        result = []
+        for row in cursor:
+            result.append(row)
+        return result
 
     def getContactListByID(self, id):
-        for r in self.data:
-            if id == r[0]:
-                return r
-
-        return None
-
-    def getContactListsByContacts(self, id):
-        result = []
-        for r in self.data:
-            if id == r[1]:
-                result.append(r)
-
-        return r
-
-    def getContactListsByUserAmount(self, amount):
-        result = []
-        for r in self.data:
-            if int(amount) == r[2]:
-                result.append(r)
-
+        cursor = self.conn.cursor()
+        query = "select cl_id, owner_id from ContactList where cl_id=%s;"
+        cursor.execute(query, (id,))
+        result = cursor.fetchone()
         return result
 
-    def getContactListByUserID(self, id):
+    def getContactListsByOwnerId(self, id):
+        cursor = self.conn.cursor()
+        query = "select cl_id, owner_id from ContactList where owner_id=%s;"
+        cursor.execute(query, (id,))
         result = []
-        for r in self.data:
-            if int(id) == r[3]:
-                result.append(r)
-
+        for r in cursor:
+            result.append(r)
         return result
+
+    def getUsersFromContactList(self, id):
+        cursor = self.conn.cursor()
+        query = "Select * from IsPart as I inner join (Users as U natural inner join PhoneNumber)using (user_id) where cl_id = %s order by U.user_id;"
+        cursor.execute(query, (id,))
+        result = []
+        for r in cursor:
+            result.append(r)
+        return result
+
+    def getUserFromContactListById(self, cl_id, user_id):
+        cursor = self.conn.cursor()
+        query = "Select * from IsPart as I inner join (Users as U natural inner join PhoneNumber) using(user_id) where cl_id = %s and user_id=%s order by U.user_id;"
+        cursor.execute(query, (cl_id, user_id,))
+        result = []
+        for r in cursor:
+            result.append(r)
+        return result
+
+    def getContactListByOwnerId(self, owner_id):
+        cursor = self.conn.cursor()
+        query = "Select U.user_id, C.cl_id, U.username, U.first_name, U.last_name, U.email, phone from ContactList as C natural inner join (Users as U natural inner join PhoneNumber) natural inner join IsPart as I where C.owner_id=%s"
+        cursor.execute(query, (owner_id,))
+        result = []
+        for r in cursor:
+            result.append(r)
+        return result
+
+
+
