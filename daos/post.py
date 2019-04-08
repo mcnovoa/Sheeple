@@ -1,6 +1,7 @@
 import psycopg2
 from sheepledb.dbconfig import pg_config
 
+
 class PostDAO:
     def __init__(self):
 
@@ -10,27 +11,45 @@ class PostDAO:
         self.conn = psycopg2._connect(connection_url)
 
     def getAllPosts(self):
-        cursor = self.conn.cursor()
-        query = "select * from Post;"
-        cursor.execute(query)
+        c = self.conn.cursor()
+        query = "Select P.post_id, post_content, post_date, image_url, user_id from Post as P full outer join Images as I on P.post_id= I.post_id;"
+        c.execute(query)
         result = []
-        for row in cursor:
+        for row in c:
             result.append(row)
         return result
 
 
     def getPostById(self, post_id):
-        cursor = self.conn.cursor()
+        c = self.conn.cursor()
         query = "select * from Post where post_id = %s;"
-        cursor.execute(query, (post_id,))
-        result = cursor.fetchone()
+        c.execute(query, (post_id,))
+        result = c.fetchone()
         return result
 
-    def createPost(self, args):
-        param1 = args.get('post_content')  # message, photo || both
-        param2 = args.get('gc_id')
-        param3 = args.get('user_id')
-        param4 = args.get('post_date')
+    def getNumOfReactions(self, post_id, reaction_type):
+        c = self.conn.cursor()
+        query = "select count(*) from Reacts where post_id = %s and reaction_type = %s;"
+        c.execute(query, (post_id, reaction_type, ))
+        result = c.fetchone()
+        return result
 
+    def getReplies(self):
+        c = self.conn.cursor()
+        query = 'Select P.post_id, post_content, user_id from Post as P full outer join isReply as R on R.original = P.post_id;'
+        c.execute(query)
+        result = []
+        for row in c:
+            result.append(row)
+        return result
+
+    def getPostsByGC(self, gc_id):
+        c = self.conn.cursor()
+        query = "Select P.post_id, post_content, user_id from Post as P full outer join isReply as R on R.original = P.post_id where P.gc_id = %s;"
+        c.execute(query, (gc_id,))
+        result = []
+        for row in c:
+            result.append(row)
+        return result
 
 
