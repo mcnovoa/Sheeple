@@ -80,7 +80,6 @@ class userHandler:
 
         return jsonify(User=mapped_result)
 
-    # user_id=1&username=gay&password=Maria&first_name=Wilmer&last_name=Octaviani&gender=M&email=papisong@hotmail.com&phone=7873456789
     def createUser(self, args):
         param0 = args.get('user_id')
         param1 = args.get('username')
@@ -138,4 +137,4 @@ class userHandler:
         if not result:
             return jsonify(Error="Incorrect username or password. Please try again"), 400
         else:
-            return jsonify(User = self.build_user_dict(result)), 200
+            return jsonify(Succesful = self.build_user_dict(result)), 200

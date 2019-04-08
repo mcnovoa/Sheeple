@@ -17,6 +17,19 @@ CORS(app)
 def welcomesheeple():
     return 'Sheeple!'
 
+# Test for registration and login
+# user_id=1&username=idk&password=Maria&first_name=Wilmer&last_name=Octaviani&gender=M&email=papisong@hotmail.com&phone=7873456789
+#Registration page
+@app.route("/Sheeple/register", methods=['POST'])
+def register():
+    if request.method =='POST':
+        return userHandler().createUser(request.args)
+#Login page
+@app.route("/Sheeple/login", methods=['POST'])
+def login():
+    if request.method == 'POST':
+        return userHandler().getUserByUsernameAndPassword(request.args)
+
 
 # --------------------------Overview---------------------------#
 # @app.route('/Sheeple/users?<string: username>&<string:password>&<string:first_name>&<string:last_name>&<char:gender>&<string:email>&<string:phone_number>', methods=['POST'])
@@ -28,7 +41,18 @@ def welcomesheeple():
 # @app.route('/Sheeple/groupchat?<string:gc_name>&<string:user_id>', methods=['POST', 'DELETE'])
 #
 #
-# @app.route('/Sheeple/contactlist/<int:cl_id>/<int:user_id>', methods=['POST', 'DELETE'])
+# @app.route('/Sheeple/contactlist/user_id', methods= ['GET'])
+# def getContactListByUser(user_id):
+#     handler = contactListHandler()
+#     if request.method == 'GET':
+#         if request.args:
+#             return handler.searchContactLists(request.args)
+#         else:
+#             return handler.getAllContactLists()
+#     elif request.method == 'PUT':
+#         return handler.postContactList(request.args)
+#     else:
+#         return jsonify(Error="Method not allowed."), 405
 #
 #
 # @app.route('/Sheeple/groupchat/<int:gc_id>', methods=['DELETE'])
@@ -83,11 +107,17 @@ def getNumOfReactions(post_id, reaction_type):
     else:
         return jsonify(Error="Method not allowed."), 405
 
-#
-#
-# @app.route('/Sheeple/contactlist/user_id', methods= ['GET'])
-#
-#
+
+# Adds, Deletes or Gets the users in a given Contact List
+@app.route('/Sheeple/contactlists/user/<int:user_id>', methods=['GET'])
+def getContactListByUser_id(user_id):
+    handler = contactListHandler()
+    if request.method == 'GET':
+        return handler.getContactListByOwnerId(user_id)
+    else:
+        return jsonify(Error="Method not allowed."), 405
+
+
 @app.route('/Sheeple/posts/groupchat/<int:gc_id>', methods= ['GET'])
 def doByPostGC(gc_id):
     handler = postHandler()
@@ -117,32 +147,32 @@ def doByPostGC(gc_id):
 
 # --------------------Start Contact Lists----------------------#
 
-@app.route('/Sheeple/ContactLists', methods=['GET'])
+@app.route('/Sheeple/contactlists', methods=['GET', 'POST'])
 def getAllContactLists():
-    if request.args:
-        return contactListHandler().searchContactLists(request.args)
-    else:
-        handler = contactListHandler()
-        return handler.getAllContactLists()
-
-
-@app.route('/Sheeple/ContactLists/<int:contact_id>', methods=['GET', 'POST', 'PUT', 'DELETE'])
-def doContactListById(contact_id):
     handler = contactListHandler()
     if request.method == 'GET':
-        return handler.getContactListByID(contact_id)
-    elif request.method == 'POST':
-        return handler.postContactList()
+        if request.args:
+            return handler.searchContactLists(request.args)
+        else:
+            return handler.getAllContactLists()
     elif request.method == 'PUT':
-        return handler.updateContactList()
+        return handler.postContactList(request.args)
     else:
-        return handler.deleteContactList()
-
-
-@app.route('/Sheeple/ContactLists/deleteUser/<int:user_id>', methods=['DELETE'])
-def RemoveUserFromContactLists(user_id):
-    return jsonify(DeletedUser='OK'), 200
-
+        return jsonify(Error="Method not allowed."), 405
+#
+@app.route('/Sheeple/contactlists/<int:cl_id>', methods=['GET', 'PUT', 'DELETE'])
+def doContactListById(cl_id):
+    handler = contactListHandler()
+    if request.method == 'GET':
+        return handler.getContactListByID(cl_id)
+    elif request.method == 'PUT':
+        pass
+        # return handler.updateContactList(cl_id, request.args)
+    elif request.method == 'DELETE':
+        pass
+        # return handler.deleteContactList(cl_id)
+    else:
+        return jsonify(Error="Method not allowed."), 405
 
 # -------------------------End Contact Lists--------------------------#
 
@@ -260,28 +290,29 @@ def doByPostId(post_id):
 
 
 # ---------------------------Start Users----------------------------#
-@app.route('/Sheeple/users', methods=['GET', 'POST', 'PUT', "DELETE"])
+@app.route('/Sheeple/users', methods=['GET', 'POST'])
 def getAllUsers():
+    handler = userHandler()
     if request.method == 'GET':
         if request.args:
-            return userHandler().searchUsers(request.args)
+            return handler.searchUsers(request.args)
         else:
-            handler = userHandler()
             return handler.getAllUsers()
-    elif request.method == 'POST':
-        return userHandler().postUser()
-    elif request.method == 'PUT':
-        return userHandler().updateUser()
     else:
-        return userHandler().deleteUser()
+        return handler.createUser(request.args)
 
 
-@app.route('/Sheeple/users/<int:user_id>', methods=['GET'])
-def getUsersById(user_id):
+@app.route('/Sheeple/users/<int:user_id>', methods=['GET', 'PUT', "DELETE"])
+def doUsersById(user_id):
     handler = userHandler()
-    return handler.getUserByID(user_id)
+    if request.method == 'GET':
+        return handler.getUserByID(user_id)
+    elif request.method == 'PUT':
+        return handler.updateUser(user_id, request.args)
+    else:
+        return handler.deleteUser(user_id)
 
-
+# -----------------------------End Users-------------------------------#
 
 
 
