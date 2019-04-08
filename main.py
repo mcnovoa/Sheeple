@@ -186,7 +186,7 @@ def getAllGroupchats():
         return handler.getAllGroupChatss()
 
 
-@app.route('/Sheeple/conversations/<int:gc_id>', methods=['GET', 'POST', 'PUT', 'DELETE'])
+@app.route('/Sheeple/groupchats/<int:gc_id>', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def doByGroupChatId(gc_id):
     handler = groupChatHandler()
     if request.method == 'GET':
@@ -201,7 +201,7 @@ def doByGroupChatId(gc_id):
         return jsonify(Error="Method not allowed."), 405
 
 
-@app.route('/Sheeple/conversations/<int:gc_id>/users', methods=['GET'])
+@app.route('/Sheeple/groupchats/<int:gc_id>/users', methods=['GET'])
 def getAllGroupChatUsers(gc_id):
     handler = groupChatHandler()
     if request.method == 'GET':
