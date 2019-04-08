@@ -12,11 +12,11 @@ class hashtagHandler:
 
     def getAllHashtags(self):
         dao = hashtagDAO()
-        hashtags = dao.getAllHashtags()
-        mapped_hashtags = []
-        for row in hashtags:
-            mapped_hashtags.append(self.build_hashtag_dict(row))
-        return jsonify(Reply=mapped_hashtags)
+        result = dao.getAllHashtags()
+        mapped_results = []
+        for row in result:
+            mapped_results.append(self.build_hashtag_dict(row))
+        return jsonify(Reply=mapped_results)
 
     def getHashtagById(self, id):
         dao = hashtagDAO()

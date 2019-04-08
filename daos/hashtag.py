@@ -1,30 +1,40 @@
+#from sheepledb.dbConfig import pg_config
+from sheepledb.dbconfig import pg_config
+import psycopg2
+
+
 class hashtagDAO:
 
-    def __init__ (self):
-        H1 = [1,"yas"]
-        H2 = [2, "queeeeen"]
-        H3 = [3, "slaaaay"]
-        H4 = [4, "metoo"]
-
-        self.hashtags = []
-        self.hashtags.append(H1)
-        self.hashtags.append(H2)
-        self.hashtags.append(H3)
-        self.hashtags.append(H4)
+    def __init__(self):
+        connection_url = "dbname=%s user=%s password=%s" % (pg_config['dbname'],
+                                                            pg_config['user'],
+                                                            pg_config['passwd'])
+        self.conn = psycopg2._connect(connection_url)
 
     def getAllHashtags(self):
-        return self.hashtags
-
-    def getHashtagById(self, id):
-        for row in self.hashtags:
-            if id == row[0]:
-                return row
-
-    def getHashtagByContent(self, content):
+        cursor = self.conn.cursor()
+        query = "select * from hashtag;"
+        cursor.execute(query)
         result = []
-        for row in self.hashtags:
-            if content == row[1]:
-                result.append(row)
+        for row in cursor:
+            result.append(row)
         return result
 
+    def getHashtagById(self, hashtag_id):
+        cursor = self.conn.cursor()
+        query = "select * from hashtag where hashtag_id=%s;"
+        cursor.execute(query, (hashtag_id,))
+
+        result = cursor.fetchone()
+        return result;
+
+    def getHashtagByContent(self, content):
+        cursor = self.conn.cursor()
+        query = "select * from hashtag where content=%s;"
+        result = []
+        cursor.execute(query, (content,))
+
+        for row in cursor:
+            result.append(row)
+        return result;
 
