@@ -10,6 +10,13 @@ class hashtagHandler:
             hashtag['content'] = row[1]
             return hashtag
 
+    def build_dashboard_dict(self, row):
+        hashtag = {}
+        hashtag['Hashtag'] = row[0]
+        hashtag['Total'] = row[1]
+
+        return hashtag
+
     def getAllHashtags(self):
         dao = hashtagDAO()
         result = dao.getAllHashtags()
@@ -52,6 +59,16 @@ class hashtagHandler:
         for row in hashtags:
             hashtag_list.append(self.build_hashtag_dict(row))
         return jsonify(Hashtag=hashtag_list)
+
+    def getPopularHashtags(self):
+        dao = hashtagDAO()
+        result = dao.getPopularHashtags()
+        mapped_result = []
+
+        for row in result:
+            mapped_result.append(self.build_dashboard_dict(row))
+
+        return jsonify(Hashtag = mapped_result), 200
 
     def postHashtag(self):
         return jsonify(CreateHashtag="CREATED"), 201

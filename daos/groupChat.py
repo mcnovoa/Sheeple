@@ -36,13 +36,12 @@ class groupChatDAO:
         cursor = self.conn.cursor()
         query = "select * from groupchat where gc_id = %s;"
         cursor.execute(query, (gc_id,))
-        result = []
         result = cursor.fetchone()
         return result
 
     def getGroupChatbyOwner(self, gc_id):
         cursor = self.conn.cursor()
-        query = "select gc_id,gc_name,first_name,admin_id from groupchat as G  inner join users as U on G.admin_id = U.user_id where gc_id = %s;"
+        query = "select username, first_name,last_name from groupchat as G  inner join users as U on G.admin_id = U.user_id where gc_id = %s;"
         cursor.execute(query, (gc_id,))
         result = []
         for row in cursor:
@@ -52,7 +51,7 @@ class groupChatDAO:
 
     def getUsersInGroupChat(self, gc_id):
         cursor = self.conn.cursor()
-        query = "select gc_id,gc_name,username from groupchat natural inner join users natural inner join belongsto where gc_id = %s;"
+        query = "select user_id, username, first_name, last_name from groupchat natural inner join users natural inner join belongsto where gc_id = %s;"
         cursor.execute(query, (gc_id,))
         result = []
         for row in cursor:
@@ -83,3 +82,11 @@ class groupChatDAO:
         cursor.execute(query, (gc_id, user_id,))
         self.conn.commit()
 
+    def getGroupChatsForUser(self, user_id):
+        cursor = self.conn.cursor()
+        query = "select gc_name from users natural inner join belongsto natural inner join groupchat where user_id = %s;"
+        cursor.execute(query, (user_id, ))
+        result = []
+        for row in cursor:
+            result.append(row)
+        return result

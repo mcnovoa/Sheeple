@@ -17,6 +17,14 @@ CORS(app)
 def welcomesheeple():
     return 'Sheeple!'
 
+@app.route('/Sheeple/dashboard/hashtags', methods=['GET'])
+def popularHashtags():
+    handler = hashtagHandler()
+    if request.method == 'GET':
+        return handler.getPopularHashtags()
+    else:
+        return jsonify(Error="Method not allowed")
+
 # Test for registration and login
 # user_id=1&username=idk&password=Maria&first_name=Wilmer&last_name=Octaviani&gender=M&email=papisong@hotmail.com&phone=7873456789
 #Registration page
@@ -86,7 +94,7 @@ def reactPost(post_id, reaction_type, user_id):
 def replyPost(post_id, original):
     handler = postHandler()
     if request.method == 'POST':
-        return handler.replyPost(post_id,original, request.args)
+        return handler.replyPost(post_id, original, request.args)
     else:
         return jsonify(Error="Method not allowed."), 405
 #
@@ -121,7 +129,7 @@ def getContactListByUser_id(user_id):
         return jsonify(Error="Method not allowed."), 405
 
 
-@app.route('/Sheeple/posts/groupchat/<int:gc_id>', methods= ['GET'])
+@app.route('/Sheeple/posts/groupchat/<int:gc_id>', methods=['GET'])
 def doByPostGC(gc_id):
     handler = postHandler()
     if request.method == 'GET':
@@ -138,8 +146,14 @@ def doByPostGC(gc_id):
 # @app.route('/Sheeple/groupchat', methods= ['GET'])
 #
 #
-# @app.route('/Sheeple/owner/gc_id', methods= ['GET'])
-#
+@app.route('/Sheeple/groupchats/owner/<int:gc_id>', methods= ['GET'])
+def getGroupChatByOwner(gc_id):
+    handler = groupChatHandler()
+
+    if request.method == 'GET':
+        return handler.getGroupChatByOwner(gc_id)
+    else:
+        return jsonify(Error= "Method not allowed"), 405
 
 
 # --------------------Start Contact Lists----------------------#
@@ -177,26 +191,29 @@ def doContactListById(cl_id):
 # --------------------------Start Group Chat--------------------------#
 
 
-@app.route('/Sheeple/groupchats', methods=['GET'])
+@app.route('/Sheeple/groupchats', methods=['GET', 'POST'])
 def getAllGroupchats():
     handler = groupChatHandler()
-    if request.args:
+
+    if request.method == 'POST':
+        gc_name = request.args.get('gc_name')
+        admin_id = request.args.get('admin_id')
+        return handler.postGroupChat(gc_name, admin_id)
+    elif request.args:
         return handler.searchByArgs(request.args)
     else:
-        return handler.getAllGroupChatss()
+        return handler.getAllGroupChats()
 
 
-@app.route('/Sheeple/groupchats/<int:gc_id>', methods=['GET', 'POST', 'PUT', 'DELETE'])
+@app.route('/Sheeple/groupchats/<int:gc_id>', methods=['GET', 'PUT', 'DELETE'])
 def doByGroupChatId(gc_id):
     handler = groupChatHandler()
     if request.method == 'GET':
         return groupChatHandler().getGroupChatById(gc_id)
-    elif request.method == 'POST':
-        return groupChatHandler().postGroupChat(gc_id)
     elif request.method == 'PUT':
-        return groupChatHandler().updateGroupChat(gc_id, request.form)
+        return handler.updateGroupChat(gc_id, request.form)
     elif request.method == 'DELETE':
-        return groupChatHandler().deleteGroupChat(gc_id)
+        return handler.deleteGroupChat(gc_id)
     else:
         return jsonify(Error="Method not allowed."), 405
 
@@ -207,8 +224,29 @@ def getAllGroupChatUsers(gc_id):
     if request.method == 'GET':
         return handler.getAllGroupChatUsers(gc_id)
 
+    else:
+        jsonify(Error="Method not allowed."), 405
 
-# -------------------------End Conversations--------------------------#
+@app.route('/Sheeple/groupchats/<int:gc_id>/<int:user_id>', methods=['POST', 'DELETE'])
+def addOrDeleteUserFromGroupchat(gc_id, user_id):
+    handler = groupChatHandler()
+
+    if request.method == 'POST':
+        return handler.addUserToGroupChat(gc_id, user_id)
+    elif request.method == 'DELETE':
+        return handler.deleteUserFromGroupChat(gc_id, user_id)
+    else:
+        jsonify(Error = "Method not allowed"), 405
+
+@app.route('/Sheeple/groupchats/user/<int:user_id>', methods=['GET'])
+def getGroupchatsForUser(user_id):
+    handler = groupChatHandler()
+    if request.method == 'GET':
+        return handler.getGroupChatsForUser(user_id)
+    else:
+        return jsonify(Error="Method not allowed"), 405
+
+# -------------------------End Groupchats--------------------------#
 
 #------------------------Start Hashtag--------------------------------#
 
@@ -281,6 +319,28 @@ def doByPostId(post_id):
         return handler.deletePost(post_id)
     else:
         return jsonify(Error="Method not allowed."), 405
+
+@app.route('/Sheeple/posts/<int:post_id>/likes', methods=['GET'])
+def getUsersWhoLikesPost(post_id):
+    handler = postHandler()
+
+    if request.method == 'GET':
+        return handler.getUserWhoLikesPost(post_id)
+
+    else:
+        return jsonify(Error="Method not allowed"), 405
+
+
+@app.route('/Sheeple/posts/<int:post_id>/dislikes', methods=['GET'])
+def getUsersWhoDisikesPost(post_id):
+    handler = postHandler()
+
+    if request.method == 'GET':
+        return handler.getUserWhoDislikesPost(post_id)
+
+    else:
+        return jsonify(Error="Method not allowed"), 405
+
 
 
 # -----------------------------End Post-------------------------------#

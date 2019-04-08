@@ -36,5 +36,15 @@ class hashtagDAO:
 
         for row in cursor:
             result.append(row)
-        return result;
+        return result
+
+    def getPopularHashtags(self):
+        cursor = self.conn.cursor()
+        query = "select hashtag_content, count(*) as count from hashashtag natural inner join hashtag group by hashtag_content order by count desc;"
+        result = []
+        cursor.execute(query)
+
+        for row in cursor:
+            result.append(row)
+        return result
 

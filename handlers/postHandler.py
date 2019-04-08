@@ -29,6 +29,13 @@ class postHandler:
         p['post_content'] = row[1]
         p['user_id'] = row[2]
 
+    def build_react_dict(self, row):
+        p={}
+        p['post_id'] = row[0]
+        p['username'] = row[1]
+
+        return p
+
         return p
 
     def build_post_attributes(self, post_id, post_content, gc_id, user_id, post_date):
@@ -146,4 +153,22 @@ class postHandler:
             return jsonify(PostDislike=img), 200
         else:
             return jsonify(Error="Reaction Not Allowed"), 404
+
+    def getUserWhoLikesPost(self, post_id):
+        dao = PostDAO()
+        result = dao.getUserWhoLikesPost(post_id)
+        mappped_result = []
+        for row in result:
+            mappped_result.append(self.build_react_dict(row))
+        return jsonify(Likes=mappped_result)
+
+    def getUserWhoDislikesPost(self, post_id):
+        dao = PostDAO()
+        result = dao.getUserWhoDislikesPost(post_id)
+        mappped_result = []
+        for row in result:
+            mappped_result.append(self.build_react_dict(row))
+        return jsonify(Dislikes=mappped_result)
+
+
 
