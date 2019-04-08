@@ -41,18 +41,21 @@ def login():
 # @app.route('/Sheeple/groupchat?<string:gc_name>&<string:user_id>', methods=['POST', 'DELETE'])
 #
 #
-# @app.route('/Sheeple/contactlist/user_id', methods= ['GET'])
-# def getContactListByUser(user_id):
-#     handler = contactListHandler()
-#     if request.method == 'GET':
-#         if request.args:
-#             return handler.searchContactLists(request.args)
-#         else:
-#             return handler.getAllContactLists()
-#     elif request.method == 'PUT':
-#         return handler.postContactList(request.args)
-#     else:
-#         return jsonify(Error="Method not allowed."), 405
+@app.route('/Sheeple/contactlists/<int:cl_id>/user', methods=['DELETE', 'POST'])
+def addOrDeleteFromContactList(cl_id):
+    handler = contactListHandler()
+    if request.method == 'POST':
+        if request.args:
+            return handler.postUserIntoContactList(cl_id, request.args)
+        else:
+            return jsonify(Error="Malformed request."), 405
+    elif request.method == 'DELETE':
+        if request.args:
+            return handler.deleteUserFromContactList(cl_id, request.args)
+        else:
+            return jsonify(Error="Malformed request."), 405
+    else:
+        return jsonify(Error="Method not allowed."), 405
 #
 #
 # @app.route('/Sheeple/groupchat/<int:gc_id>', methods=['DELETE'])
@@ -136,12 +139,6 @@ def doByPostGC(gc_id):
 #
 #
 # @app.route('/Sheeple/owner/gc_id', methods= ['GET'])
-#
-#
-# @app.route('/Sheeple/users/<int:user_id>', methods= ['GET'])
-#
-#
-# @app.route('/Sheeple/users?<string:username>', methods=['GET'])
 #
 
 
