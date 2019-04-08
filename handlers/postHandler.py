@@ -10,30 +10,54 @@ class postHandler:
         p['post_id'] = row[0]
         p['post_content'] = row[1]
         p['post_date'] = row[2]
-        p['user_id'] = row[3]
-        p['gc_id'] = row[4]
-        p['hashtag_id'] = row[5]
-        p['reaction_id'] = row[6]
-        p['reply_id'] = row[7]
-        p['reaction_amount'] = row[8]
-        p['reply_amount'] = row[9]
+        p['image_url'] = row[3]
+        p['user_id'] = row[4]
 
         return p
 
-    def build_post_attributes (post_id, post_content, post_date, user_id, gc_id, hashtag_id, reaction_id,
-                               reply_id, reaction_amount, reply_amount):
-        groupchat = {}
-        groupchat['post_id'] = post_id
-        groupchat['post_content'] = post_content
-        groupchat['post_date'] = post_date
-        groupchat['user_id'] = user_id
-        groupchat['gc_id'] = gc_id
-        groupchat['hashtag_id'] = hashtag_id
-        groupchat['reaction_id'] = reaction_id
-        groupchat['reply_id'] = reply_id
-        groupchat['reaction_amount'] = reaction_amount
-        groupchat['reply_amount'] = reply_amount
+    def build_pr_dict(self, row):
+        p = {}
+        p['post_id'] = row[0]
+        p['post_content'] = row[1]
+        p['user_id'] = row[2]
 
+        return p
+
+    def build_pr_dict(self, row):
+        p = {}
+        p['post_id'] = row[0]
+        p['post_content'] = row[1]
+        p['user_id'] = row[2]
+
+        return p
+
+    def build_post_attributes(self, post_id, post_content, gc_id, user_id, post_date):
+        post = {}
+        post['post_id'] = post_id
+        post['post_content'] = post_content
+        post['post_date'] = post_date
+        post['user_id'] = user_id
+        post['gc_id'] = gc_id
+
+        return post
+
+    def build_r_attributes(self, post_id, post_content, gc_id, user_id, post_date, original_post):
+        p = {}
+        p['post_id'] = post_id
+        p['post_content'] = post_content
+        p['gc_id'] = gc_id
+        p['user_id'] = user_id
+        p['post_date'] = post_date
+        p['original_post'] = original_post
+
+        return p
+
+    def build_nr_attributes(self, post_id, number_of_reactions):
+        nr = {}
+        nr['post_id'] = post_id
+        nr['numer_of_reactions'] = number_of_reactions
+
+        return nr
 
     def getAllPosts(self):
         dao = PostDAO()
@@ -41,66 +65,85 @@ class postHandler:
         apsts = []
         for a in apst:
             apsts.append(self.build_post_dict(a))
-
         return jsonify(Posts=apsts)
-
-    def searchByArgs(self, args):
-        daop = PostDAO()
-
-        param1 = args.get('post_content') #message, photo || both
-        param2 = args.get('post_date')
-        param3 = args.get('user_id')
-        param4 = args.get('gc_id')
-        param5 = args.get('hashtag_id')
-        param6 = args.get('reaction_id')
-        param7 = args.get('reply_id')
-        param8 = args.get('reaction_amount')
-        param9 = args.get('reply_amount')
-
-        if param1:
-            result = daop.getPostContent(param1)
-        elif param2:
-            result = daop.getPostDate(param2)
-        elif param3:
-            result = daop.getPostUser(param3)
-        elif param4:
-            result = daop.getPostGroupChat(param4)
-        elif param5:
-            result = daop.getPostHashtag(param5)
-        elif param6:
-            result = daop.getPostReactions(param6)
-        elif param7:
-            result = daop.getPostReplies(param7)
-        elif param8:
-            result = daop.getPostReactionAmount(param8)
-        elif param9:
-            result = daop.getPostRepliesAmount(param9)
-        else:
-            return jsonify(Error="NOT FOUND"), 404
-        mapped_result = []
-        for p in result:
-            mapped_result.append(self.build_post_dict(p))
-        return jsonify(Posts=mapped_result)
-
 
     def getPostById(self, post_id):
         dao = PostDAO()
-        p = dao.getPostBy(post_id)
+        p = dao.getPostById(post_id)
         if p == None:
             return jsonify(Error="NOT FOUND"), 404
         else:
-            pmap = self.build_groupchat_dict(p)
+            pmap = self.build_post_dict(p)
 
         return jsonify(Posts=pmap)
 
-    def updatePost(self, post_id, form):
-        return jsonify(UpdatePost="OK"), 200
+    def updatePost(self, post_id, args):
+        post_content = args.get('post_content')  # message, photo || both
+        gc_id = args.get('gc_id')
+        user_id = args.get('user_id')
+        post_date = args.get('post_date')
+
+        result = self.build_post_attributes(post_id, post_content, gc_id, user_id, post_date)
+        return jsonify(UpdatePost=result), 201
 
     def deletePost(self, post_id):
-        return jsonify(DeletePost="OK"), 200
+        result = self.getPostById(post_id)
+        return result, 200
 
-    def postPost(self, post_id):
-        return jsonify(CreatePost="OK"), 201
+    def createPost(self, post_id, args):
+        post_content = args.get('post_content')  # message, photo || both
+        gc_id = args.get('gc_id')
+        user_id = args.get('user_id')
+        post_date = args.get('post_date')
 
+        result = self.build_post_attributes(post_id, post_content, gc_id, user_id, post_date)
+        return jsonify(CreatePost= result), 201
 
+    def replyPost(self, post_id, original_post, args):
+        post_content = args.get('post_content')  # message, photo || both
+        gc_id = args.get('gc_id')
+        user_id = args.get('user_id')
+        post_date = args.get('post_date')
+
+        r = self.build_r_attributes(post_id, post_content, gc_id, user_id, post_date, original_post)
+
+        return jsonify(CreateReply=r), 200
+
+    def getNumOfReactions(self, post_id, reaction_type):
+        dao = PostDAO()
+        cr = dao.getNumOfReactions(post_id, reaction_type)
+        nr = self.build_nr_attributes(post_id, cr)
+
+        if reaction_type == 'like':
+            return jsonify(NumberOfLikes=nr), 200
+        elif reaction_type == 'dislike':
+            return jsonify(NumberOfDislikes=nr), 200
+        else:
+            return jsonify(Error="Reaction Not Allowed"), 404
+
+    def getPostsByGC(self, gc_id):
+        dao = PostDAO()
+        gcp = dao.getPostsByGC(gc_id)
+        result = []
+        for a in gcp:
+            result.append(self.build_pr_dict(a))
+        return jsonify(Posts=result)
+
+    def getPostsReplies(self):
+        dao = PostDAO()
+        ps = dao.getReplies()
+        result = []
+        for i in ps:
+            result.append(self.build_pr_dict(i))
+        return jsonify(ImageAndReplies=result), 200
+
+    def reactPost(self, post_id, reaction_type, user_id):
+        dao = PostDAO()
+        img = self.build_post_dict(dao.getPostById(post_id))
+        if reaction_type == 'like':
+            return jsonify(PostLike=img), 200
+        elif reaction_type == 'dislike':
+            return jsonify(PostDislike=img), 200
+        else:
+            return jsonify(Error="Reaction Not Allowed"), 404
 

@@ -1,5 +1,5 @@
-# import psycopg2
-from daos.contact import ContactDAO
+import psycopg2
+
 
 
 

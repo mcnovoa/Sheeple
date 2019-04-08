@@ -19,67 +19,100 @@ def welcomesheeple():
 
 
 # --------------------------Overview---------------------------#
-@app.route('/Sheeple/users?<string: username>&<string:password>&<string:first_name>&<string:last_name>&<char:gender>&<string:email>&<string:phone_number>', methods=['POST'])
+# @app.route('/Sheeple/users?<string: username>&<string:password>&<string:first_name>&<string:last_name>&<char:gender>&<string:email>&<string:phone_number>', methods=['POST'])
+#
+#
+# @app.route('/Sheeple/login?<string:username>&<string:password', methods=['POST'])
+#
+#
+# @app.route('/Sheeple/groupchat?<string:gc_name>&<string:user_id>', methods=['POST', 'DELETE'])
+#
+#
+# @app.route('/Sheeple/contactlist/<int:cl_id>/<int:user_id>', methods=['POST', 'DELETE'])
+#
+#
+# @app.route('/Sheeple/groupchat/<int:gc_id>', methods=['DELETE'])
+#
+#Este route ya existe:
+# @app.route('/Sheeple/posts/<int:gc_id>?<string:image_url>&<string:post_content>', methods=['POST'])
+#
+#
+@app.route('/Sheeple/posts-and-replies', methods=['GET'])
+def doGetPostsReplies():
+    handler = postHandler()
+    if request.method == 'GET':
+       return handler.getPostsReplies()
+    else:
+        return jsonify(Error="Method not allowed."), 405
 
 
-@app.route('/Sheeple/login?<string:username>&<string:password', methods=['POST'])
+@app.route('/Sheeple/posts/<int:post_id>/<string:reaction_type>/<int:user_id>' ,methods=['POST'])
+def reactPost(post_id, reaction_type, user_id):
+    handler = postHandler()
+    if request.method == 'POST':
+        return handler.reactPost(post_id, reaction_type, user_id)
+    else:
+        return jsonify(Error="Method not allowed."), 405
 
 
-@app.route('/Sheeple/groupchat?<string:gc_name>&<string:user_id>', methods=['POST', 'DELETE'])
+@app.route('/Sheeple/posts/<int:post_id>/reply/<int:original>', methods= ['POST'])
+def replyPost(post_id, original):
+    handler = postHandler()
+    if request.method == 'POST':
+        return handler.replyPost(post_id,original, request.args)
+    else:
+        return jsonify(Error="Method not allowed."), 405
+#
+# # ------------------- ----Second Phase-------------------------#
+#
+@app.route('/Sheeple/posts', methods=['GET'])
+def getAllPosts():
+    handler = postHandler()
+
+    if request.method == 'GET':
+        return handler.getAllPosts()
+    else:
+        return jsonify(Error="Method not allowed."), 405
 
 
-@app.route('/Sheeple/contactlist/<int:cl_id>/<int:user_id>', methods=['POST', 'DELETE'])
+@app.route('/Sheeple/posts/reactions/<string:reaction_type>/<int:post_id>', methods=['GET'])
+def getNumOfReactions(post_id, reaction_type):
+    handler = postHandler()
+    if request.method == 'GET':
+        return handler.getNumOfReactions(post_id, reaction_type)
+    else:
+        return jsonify(Error="Method not allowed."), 405
 
+#
+#
+# @app.route('/Sheeple/contactlist/user_id', methods= ['GET'])
+#
+#
+@app.route('/Sheeple/posts/groupchat/<int:gc_id>', methods= ['GET'])
+def doByPostGC(gc_id):
+    handler = postHandler()
+    if request.method == 'GET':
+        return handler.getPostsByGC(gc_id)
+    else:
+        return jsonify(Error="Method not allowed."), 405
 
-@app.route('/Sheeple/groupchat/<int:gc_id>', methods=['DELETE'])
-
-
-@app.route('/Sheeple/posts/<int:gc_id>?<string:image_url>&<string:post_content>', methods=['POST'])
-
-
-@app.route('/Sheeple/images', methods=['GET'])
-
-
-@app.route('/Sheeple/images/<int:gc_id>/<string:reaction_type>/<int:image_id>', methods= ['POST'])
-
-
-@app.route('/Sheeple/posts/<int:gc_id>/<int:image_id>?<string:post_content>', methods= ['POST'])
-
-
-# ------------------- ----Second Phase-------------------------#
-
-@app.route('/Sheeple/images', methods=['GET'])
-
-
-@app.route('/Sheeple/posts/<string:reaction_type>/<int:post_id>', methods=['GET'])
-
-
-@app.route('/Sheeple/users/<string:reaction_type>/<int:post_id>', methods=['GET'])
-
-
-@app.route('/Sheeple/contactlist/user_id', methods= ['GET'])
-
-
-@app.route('/Sheeple/posts/gc_id', methods= ['GET'])
-
-
-@app.route('/Sheeple/users/gc_id', methods= ['GET'])
-
-
-@app.route('/Sheeple/users', methods= ['GET'])
-
-
-@app.route('/Sheeple/groupchat', methods= ['GET'])
-
-
-@app.route('/Sheeple/owner/gc_id', methods= ['GET'])
-
-
-@app.route('/Sheeple/users/<int:user_id>', methods= ['GET'])
-
-
-@app.route('/Sheeple/users?<string:username>', methods=['GET'])
-
+# @app.route('/Sheeple/users/gc_id', methods= ['GET'])
+#
+#
+# @app.route('/Sheeple/users', methods= ['GET'])
+#
+#
+# @app.route('/Sheeple/groupchat', methods= ['GET'])
+#
+#
+# @app.route('/Sheeple/owner/gc_id', methods= ['GET'])
+#
+#
+# @app.route('/Sheeple/users/<int:user_id>', methods= ['GET'])
+#
+#
+# @app.route('/Sheeple/users?<string:username>', methods=['GET'])
+#
 
 
 # --------------------Start Contact Lists----------------------#
@@ -194,9 +227,9 @@ def doByImageId(image_id):
     if request.method == 'GET':
         return handler.getImageById(image_id)
     elif request.method == 'POST':
-        return handler.postImage(image_id)
+        return handler.createImage(image_id, request.args)
     elif request.method == 'PUT':
-        return handler.updateImage(image_id, request.form)
+        return handler.updateImage(image_id, request.args)
     elif request.method == 'DELETE':
         return handler.deleteImage(image_id)
     else:
@@ -214,22 +247,13 @@ def doByPostId(post_id):
     if request.method == 'GET':
         return handler.getPostById(post_id)
     elif request.method == 'POST':
-        return handler.postPost(post_id)
+        return handler.createPost(post_id, request.args)
     elif request.method == 'PUT':
-        return handler.updatePost(post_id, request.form)
+        return handler.updatePost(post_id)
     elif request.method == 'DELETE':
-        return handler.deletePost([post_id])
+        return handler.deletePost(post_id)
     else:
         return jsonify(Error="Method not allowed."), 405
-
-
-@app.route('/Sheeple/posts', methods=['GET'])
-def getAllPosts():
-    handler = postHandler()
-    if request.args:
-        return handler.searchByArgs(request.args)
-    else:
-        return handler.getAllPosts()
 
 
 # -----------------------------End Post-------------------------------#

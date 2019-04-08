@@ -1,43 +1,26 @@
-#import psycopg2
-
+import psycopg2
+from sheepledb.dbconfig import pg_config
 
 class ImageDAO:
     def __init__(self):
-    #An message_id = -1 means there's no image in the message
-        I1 = [1, 0]
-        I2 = [2, 3]
-        I3 = [3, 2]
-        I4 = [4, 1]
-        I5 = [5, 0]
 
-        self.data = []
-        self.data.append(I1)
-        self.data.append(I2)
-        self.data.append(I3)
-        self.data.append(I4)
-        self.data.append(I5)
+        connection_url = "dbname=%s user=%s password=%s" % (pg_config['dbname'],
+        pg_config['user'], pg_config['passwd'])
 
+        self.conn = psycopg2._connect(connection_url)
 
     def getAllImages(self):
-        return self.data
+        c = self.conn.cursor()
+        query = "select * from Post as P, Images as I where P.post_id = I.post_id;"
+        c.execute(query)
+        result = []
+        for row in c:
+            result.append(row)
+        return result
 
     def getImagesById(self, image_id):
-        for i in self.data:
-            if int(image_id) == i[0]:
-                return i
-        return None
-
-    def searchByMessageId(self, message_id):
-        result = []
-        for i in self.data:
-            if int(message_id) == i[1]:
-                result.append(i)
+        c = self.conn.cursor()
+        query = "select * from Post as P, Images as I where P.post_id = I.post_id and I.image_id = %s;"
+        c.execute(query, (image_id,))
+        result = c.fetchone()
         return result
-
-    def searchImagesSameMessages(self, message_id):
-        result = []
-        for i in self.data:
-            if int(message_id) == i[1]:
-                result.append(i)
-        return result
-

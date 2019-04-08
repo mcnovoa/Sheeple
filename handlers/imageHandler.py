@@ -1,58 +1,73 @@
-from flask import jsonify
-
 from daos.image import ImageDAO
+from daos.post import PostDAO
+from flask import jsonify
 
 
 class imageHandler:
+
     def build_image_dict(self, row):
         img = {}
         img['image_id'] = row[0]
-        img['message_id'] = row[1]
+        img['image_url'] = row[1]
+        img['post_id'] = row[2]
 
         return img
 
-    def build_post_dict(self, row):
-        p = {}
-        p['post_id'] = row[0]
-        p['post_content'] = row[1]
-        p['post_date'] = row[2]
-        p['user_id'] = row[3]
-        p['gc_id'] = row[4]
-        p['hashtag_id'] = row[5]
-        p['reaction_id'] = row[6]
-        p['reply_id'] = row[7]
-        p['reaction_amount'] = row[8]
-        p['reply_amount'] = row[9]
+    def build_image_attributes(self, image_id, image_url, post_id):
+        img = {}
+        img['image_id'] = image_id
+        img['image_url'] = image_url
+        img['post_id'] = post_id
 
-    def build_image_attributes (image_id, message_id):
-        groupchat = {}
-        groupchat['image_id'] = image_id
-        groupchat['message_id'] = message_id
+        return img
 
+    def build_pimg_dict(self, row):
+        img = {}
+        img['post_id'] = row[0]
+        img['post_content'] = row[1]
+        img['gc_id'] = row[2]
+        img['user_id'] = row[3]
+        img['post_date'] = row[4]
+        img['image_id'] = row[5]
+        img['image_url'] = row[6]
+        img['reply_id'] = row[7]
+
+        return img
+
+    def build_pimgr_dict(self, row):
+        img = {}
+        img['post_id'] = row[0]
+        img['post_content'] = row[1]
+        img['gc_id'] = row[2]
+        img['user_id'] = row[3]
+        img['post_date'] = row[4]
+        img['image_id'] = row[5]
+        img['image_url'] = row[6]
+        img['reaction_by'] = row[7]
+
+        return img
+
+    def buil_r_dict(self, row):
+        img = {}
+        img['post_id'] = row[0]
+        img['post_content'] = row[1]
+        img['gc_id'] = row[2]
+        img['user_id'] = row[3]
+        img['post_date'] = row[4]
+        img['image_id'] = row[5]
+        img['image_url'] = row[6]
+        img['reply_id'] = row[7]
+
+        return img
 
     def getAllImages(self):
         dao = ImageDAO()
         imgs = dao.getAllImages()
         imgmapped = []
         for m in imgs:
-           imgmapped.append(self.build_image_dict(m))
+           imgmapped.append(self.build_pimg_dict(m))
 
         return jsonify(Images=imgmapped)
-
-    def searchImagesByArgs(self, args):
-        dao = ImageDAO()
-
-        param1 = args.get('message_id')
-
-        if param1:
-            result = dao.searchByMessageId(param1)
-        else:
-            return jsonify(Error="NOT FOUND"), 404
-
-        result1 = []
-        for i in result:
-            result1.append(self.build_image_dict(i))
-        return jsonify(Images=result1)
 
     def getImageById(self, image_id):
         dao = ImageDAO()
@@ -60,22 +75,26 @@ class imageHandler:
         if img == None:
             return jsonify(Error="NOT FOUND"), 404
         else:
-            result = self.build_message_dict(img)
+            imap = self.build_pimg_dict(img)
 
-        return jsonify(Image=result)
+        return jsonify(Images=imap)
 
-    def updateImage(self, image_id, form):
-        return jsonify(UpdateImage="OK"), 200
+    def updateImage(self, image_id, args):
+        dao = ImageDAO()
+        image_url = args.get('image_url')
+        img = self.build_image_dict(dao.getImagesById(image_id))
+        img.__setitem__('image_url', image_url)
+        return jsonify(UpdateImage=img), 201
 
     def deleteImage(self, image_id):
-        return jsonify(DeleteImage="OK"), 200
+        result = self.getImageById(image_id)
+        return result, 200
 
-    def postImage(self,image_id):
-        return jsonify(CreateImage="OK"), 201
+    def createImage(self, image_id, args):
+        image_url = args.get('image_url')
+        post_id = args.get('post_id')
 
-
-
-
-
+        result = self.build_image_attributes(image_id, image_url, post_id)
+        return jsonify(CreateImage=result), 201
 
 
