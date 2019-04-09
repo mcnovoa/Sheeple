@@ -49,6 +49,15 @@ class groupChatDAO:
 
         return result
 
+    def getGroupChatbyOwnerAndAdmin(self,gc_id, admin_id):
+        cursor = self.conn.cursor()
+        query = "select username, first_name,last_name from groupchat as G  inner join users as U on G.admin_id = U.user_id where gc_id = %s and admin_id = %s;"
+        cursor.execute(query, (gc_id, admin_id))
+        result = []
+        for row in cursor:
+            result.append(row)
+        return result
+
     def getUsersInGroupChat(self, gc_id):
         cursor = self.conn.cursor()
         query = "select user_id, username, first_name, last_name from groupchat natural inner join users natural inner join belongsto where gc_id = %s;"
@@ -60,9 +69,14 @@ class groupChatDAO:
 
     def postGroupChat(self, gc_name, admin_id):
         cursor = self.conn.cursor()
-        query = "insert into groupchat(gc_name,admin_id) values(%s,%s);"
+        query = "insert into groupchat(gc_name,admin_id) values(%s,%s) returning gc_id;"
         cursor.execute(query, (gc_name, admin_id,))
+
+        gid = cursor.fetchone()[0]
+
         self.conn.commit()
+
+        return gid
 
     def deleteGroupChat(self, gc_id):
         cursor = self.conn.cursor()
@@ -80,6 +94,13 @@ class groupChatDAO:
         cursor = self.conn.cursor()
         query = "delete from belongsto where gc_id=%s AND user_id=%s;"
         cursor.execute(query, (gc_id, user_id,))
+        self.conn.commit()
+
+    def deleteAllUsersFromGroupChat(self, gc_id):
+        cursor = self.conn.cursor()
+        query ="delete from belongsto where gc_id=%s;"
+        cursor.execute(query, (gc_id,))
+        gid = cursor.fetchone()[0]
         self.conn.commit()
 
     def getGroupChatsForUser(self, user_id):
