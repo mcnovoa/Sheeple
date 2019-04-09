@@ -74,12 +74,12 @@ class groupChatHandler:
     def deleteGroupChat(self, gc_id, admin_id):
         dao = groupChatDAO()
         result = dao.getGroupChatbyOwnerAndAdmin(gc_id, admin_id)
-        if result is None:
+        if not result:
             return jsonify(Error="Is not Admin for Groupchat")
         else:
             dao.deleteAllUsersFromGroupChat(gc_id)
-            dao.deleteGroupChat(gc_id)
-            return jsonify(DeleteGroupChat="OK"), 200
+            id = dao.deleteGroupChat(gc_id)
+            return jsonify(DeleteGroupChat=id), 200
 
     def postGroupChat(self, gc_name, admin_id):
 
@@ -103,15 +103,15 @@ class groupChatHandler:
     def addUserToGroupChat(self, gc_id, user_id):
         dao = groupChatDAO()
 
-        dao.addUserToGroupChat(gc_id, user_id)
+        user = dao.addUserToGroupChat(gc_id, user_id)
 
-        return jsonify(UserAdded = "OK"),200
+        return jsonify(UserAdded =user),200
 
     def deleteUserFromGroupChat(self, gc_id, user_id):
         dao = groupChatDAO()
-        dao.deleteUserFromGroupChat(gc_id, user_id)
+        id = dao.deleteUserFromGroupChat(gc_id, user_id)
 
-        return jsonify(UserDeleted = "OK"), 200
+        return jsonify(UserDeleted = id), 200
 
     def getGroupChatsForUser(self, user_id):
         dao = groupChatDAO()
