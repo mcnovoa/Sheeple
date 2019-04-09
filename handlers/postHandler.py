@@ -1,8 +1,5 @@
-from flask import jsonify
-
 from daos.post import PostDAO
-
-
+from flask import Flask, jsonify, request
 class postHandler:
 
     def build_post_dict(self, row):
@@ -12,6 +9,8 @@ class postHandler:
         p['post_date'] = row[2]
         p['image_url'] = row[3]
         p['user_id'] = row[4]
+        p['gc_id'] = row[5]
+        p['original_post'] = row[6]
 
         return p
 
@@ -23,38 +22,33 @@ class postHandler:
 
         return p
 
-    def build_pr_dict(self, row):
+    def build_ps_dict(self, row):
         p = {}
-        p['post_id'] = row[0]
-        p['post_content'] = row[1]
-        p['user_id'] = row[2]
-
-    def build_react_dict(self, row):
-        p={}
-        p['post_id'] = row[0]
-        p['username'] = row[1]
+        p['day'] = row[0]
+        p['total'] = row[1]
 
         return p
 
-        return p
+    def build_post_attributes(self, post_id, post_content, post_date, image_url, user_id, gc_id, original_post):
+            p = {}
+            p['post_id'] = post_id
+            p['post_content'] = post_content
+            p['post_date'] = post_date
+            p['image_url'] = image_url
+            p['user_id'] = user_id
+            p['gc_id'] = gc_id
+            p['original_post'] = original_post
 
-    def build_post_attributes(self, post_id, post_content, gc_id, user_id, post_date):
-        post = {}
-        post['post_id'] = post_id
-        post['post_content'] = post_content
-        post['post_date'] = post_date
-        post['user_id'] = user_id
-        post['gc_id'] = gc_id
+            return p
 
-        return post
-
-    def build_r_attributes(self, post_id, post_content, gc_id, user_id, post_date, original_post):
+    def build_r_attributes(self, post_id, post_content, post_date, image_url, user_id, gc_id, original_post):
         p = {}
         p['post_id'] = post_id
         p['post_content'] = post_content
-        p['gc_id'] = gc_id
-        p['user_id'] = user_id
         p['post_date'] = post_date
+        p['image_url'] = image_url
+        p['user_id'] = user_id
+        p['gc_id'] = gc_id
         p['original_post'] = original_post
 
         return p
@@ -72,6 +66,7 @@ class postHandler:
         apsts = []
         for a in apst:
             apsts.append(self.build_post_dict(a))
+
         return jsonify(Posts=apsts)
 
     def getPostById(self, post_id):
@@ -82,28 +77,46 @@ class postHandler:
         else:
             pmap = self.build_post_dict(p)
 
-        return jsonify(Posts=pmap)
+        return jsonify(Posts=pmap), 200
 
     def updatePost(self, post_id, args):
         post_content = args.get('post_content')  # message, photo || both
         gc_id = args.get('gc_id')
         user_id = args.get('user_id')
         post_date = args.get('post_date')
+        image_url = args.get('image_url')
+        original_post = args.get('original_post')
+        result = self.build_post_attributes(post_id, post_content, post_date, image_url, user_id,  gc_id, original_post)
 
-        result = self.build_post_attributes(post_id, post_content, gc_id, user_id, post_date)
         return jsonify(UpdatePost=result), 201
 
     def deletePost(self, post_id):
-        result = self.getPostById(post_id)
-        return result, 200
+        dao = PostDAO()
+        p = dao.getPostById(post_id)
+        if p == None:
+            return jsonify(Error="NOT FOUND"), 404
+        result = self.build_post_dict(p)
+
+        return jsonify(CreatePost=result), 200
 
     def createPost(self, post_id, args):
-        post_content = args.get('post_content')  # message, photo || both
+        dao = PostDAO()
+        s = dao.getPostById(post_id)
+
+        if s != None:
+            return jsonify(Error="Post Already Exists"), 404
+
+        post_content = args.get('post_content')
         gc_id = args.get('gc_id')
         user_id = args.get('user_id')
         post_date = args.get('post_date')
+        image_url = args.get('image_url')
+        original_post = args.get('original_post')
 
-        result = self.build_post_attributes(post_id, post_content, gc_id, user_id, post_date)
+        result = {}
+        if post_content and gc_id and user_id and post_date:
+            result = self.build_post_attributes(post_id, post_content, post_date, image_url, user_id, gc_id, original_post)
+
         return jsonify(CreatePost= result), 201
 
     def replyPost(self, post_id, original_post, args):
@@ -111,16 +124,18 @@ class postHandler:
         gc_id = args.get('gc_id')
         user_id = args.get('user_id')
         post_date = args.get('post_date')
-
-        r = self.build_r_attributes(post_id, post_content, gc_id, user_id, post_date, original_post)
+        image_url = args.get('image_url')
+        r = self.build_post_attributes(post_id, post_content, post_date, image_url, user_id, gc_id, original_post)
 
         return jsonify(CreateReply=r), 200
 
     def getNumOfReactions(self, post_id, reaction_type):
         dao = PostDAO()
+        p = dao.getPostById(post_id)
+        if p == None:
+            return jsonify(Error="NOT FOUND"), 404
         cr = dao.getNumOfReactions(post_id, reaction_type)
         nr = self.build_nr_attributes(post_id, cr)
-
         if reaction_type == 'like':
             return jsonify(NumberOfLikes=nr), 200
         elif reaction_type == 'dislike':
@@ -133,16 +148,17 @@ class postHandler:
         gcp = dao.getPostsByGC(gc_id)
         result = []
         for a in gcp:
-            result.append(self.build_pr_dict(a))
+            result.append(self.build_post_dict(a))
+
         return jsonify(Posts=result)
 
     def getPostsReplies(self):
         dao = PostDAO()
-        ps = dao.getReplies()
+        ps = dao.getAllPosts()
         result = []
         for i in ps:
-            result.append(self.build_pr_dict(i))
-        return jsonify(ImageAndReplies=result), 200
+            result.append(self.build_post_dict(i))
+        return jsonify(PostAndReplies=result), 200
 
     def reactPost(self, post_id, reaction_type, user_id):
         dao = PostDAO()
@@ -153,6 +169,14 @@ class postHandler:
             return jsonify(PostDislike=img), 200
         else:
             return jsonify(Error="Reaction Not Allowed"), 404
+
+    def getPostsByDay(self):
+        dao = PostDAO()
+        pts = dao.getPostsByDay()
+        result = []
+        for a in pts:
+            result.append(self.build_ps_dict(a))
+        return jsonify(PostsByDay=result)
 
     def getUserWhoLikesPost(self, post_id):
         dao = PostDAO()
@@ -168,7 +192,6 @@ class postHandler:
         mappped_result = []
         for row in result:
             mappped_result.append(self.build_react_dict(row))
+
+
         return jsonify(Dislikes=mappped_result)
-
-
-

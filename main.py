@@ -17,6 +17,29 @@ CORS(app)
 def welcomesheeple():
     return 'Sheeple!'
 
+# ---------------------Login & Register-------------------------#
+
+# Registration page
+@app.route("/Sheeple/register", methods=['POST'])
+def register():
+    if request.method =='POST':
+        return userHandler().createUser(request.args)
+
+# Login page
+@app.route("/Sheeple/login", methods=['POST'])
+def login():
+    if request.method == 'POST':
+        return userHandler().getUserByUsernameAndPassword(request.args)
+
+# ------------------------Dashboard ----------------------------#
+@app.route('/Sheeple/dashboard/posts', methods= ['GET'])
+def getPostsByDay():
+    handler = postHandler()
+    if request.method == 'GET':
+        return handler.getPostsByDay()
+    else:
+        return jsonify(Error="Method not allowed."), 405
+
 @app.route('/Sheeple/dashboard/hashtags', methods=['GET'])
 def popularHashtags():
     handler = hashtagHandler()
@@ -25,79 +48,6 @@ def popularHashtags():
     else:
         return jsonify(Error="Method not allowed")
 
-# Test for registration and login
-# user_id=1&username=idk&password=Maria&first_name=Wilmer&last_name=Octaviani&gender=M&email=papisong@hotmail.com&phone=7873456789
-#Registration page
-@app.route("/Sheeple/register", methods=['POST'])
-def register():
-    if request.method =='POST':
-        return userHandler().createUser(request.args)
-#Login page
-@app.route("/Sheeple/login", methods=['POST'])
-def login():
-    if request.method == 'POST':
-        return userHandler().getUserByUsernameAndPassword(request.args)
-
-
-# --------------------------Overview---------------------------#
-# @app.route('/Sheeple/users?<string: username>&<string:password>&<string:first_name>&<string:last_name>&<char:gender>&<string:email>&<string:phone_number>', methods=['POST'])
-#
-#
-# @app.route('/Sheeple/login?<string:username>&<string:password', methods=['POST'])
-#
-#
-# @app.route('/Sheeple/groupchat?<string:gc_name>&<string:user_id>', methods=['POST', 'DELETE'])
-#
-#
-@app.route('/Sheeple/contactlists/<int:cl_id>/user', methods=['DELETE', 'POST'])
-def addOrDeleteFromContactList(cl_id):
-    handler = contactListHandler()
-    if request.method == 'POST':
-        if request.args:
-            return handler.postUserIntoContactList(cl_id, request.args)
-        else:
-            return jsonify(Error="Malformed request."), 405
-    elif request.method == 'DELETE':
-        if request.args:
-            return handler.deleteUserFromContactList(cl_id, request.args)
-        else:
-            return jsonify(Error="Malformed request."), 405
-    else:
-        return jsonify(Error="Method not allowed."), 405
-#
-#
-# @app.route('/Sheeple/groupchat/<int:gc_id>', methods=['DELETE'])
-#
-#Este route ya existe:
-# @app.route('/Sheeple/posts/<int:gc_id>?<string:image_url>&<string:post_content>', methods=['POST'])
-#
-#
-@app.route('/Sheeple/posts-and-replies', methods=['GET'])
-def doGetPostsReplies():
-    handler = postHandler()
-    if request.method == 'GET':
-       return handler.getPostsReplies()
-    else:
-        return jsonify(Error="Method not allowed."), 405
-
-
-@app.route('/Sheeple/posts/<int:post_id>/<string:reaction_type>/<int:user_id>' ,methods=['POST'])
-def reactPost(post_id, reaction_type, user_id):
-    handler = postHandler()
-    if request.method == 'POST':
-        return handler.reactPost(post_id, reaction_type, user_id)
-    else:
-        return jsonify(Error="Method not allowed."), 405
-
-
-@app.route('/Sheeple/posts/<int:post_id>/reply/<int:original>', methods= ['POST'])
-def replyPost(post_id, original):
-    handler = postHandler()
-    if request.method == 'POST':
-        return handler.replyPost(post_id, original, request.args)
-    else:
-        return jsonify(Error="Method not allowed."), 405
-#
 # # ------------------- ----Second Phase-------------------------#
 #
 @app.route('/Sheeple/posts', methods=['GET'])
@@ -137,15 +87,7 @@ def doByPostGC(gc_id):
     else:
         return jsonify(Error="Method not allowed."), 405
 
-# @app.route('/Sheeple/users/gc_id', methods= ['GET'])
-#
-#
-# @app.route('/Sheeple/users', methods= ['GET'])
-#
-#
-# @app.route('/Sheeple/groupchat', methods= ['GET'])
-#
-#
+
 @app.route('/Sheeple/groupchats/owner/<int:gc_id>', methods= ['GET'])
 def getGroupChatByOwner(gc_id):
     handler = groupChatHandler()
@@ -153,7 +95,7 @@ def getGroupChatByOwner(gc_id):
     if request.method == 'GET':
         return handler.getGroupChatByOwner(gc_id)
     else:
-        return jsonify(Error= "Method not allowed"), 405
+        return jsonify(Error="Method not allowed"), 405
 
 
 # --------------------Start Contact Lists----------------------#
@@ -182,6 +124,23 @@ def doContactListById(cl_id):
     elif request.method == 'DELETE':
         pass
         # return handler.deleteContactList(cl_id)
+    else:
+        return jsonify(Error="Method not allowed."), 405
+
+# Add or Delete Contact from contact list of user X
+@app.route('/Sheeple/contactlists/<int:cl_id>/user', methods=['DELETE', 'POST'])
+def addOrDeleteFromContactList(cl_id):
+    handler = contactListHandler()
+    if request.method == 'POST':
+        if request.args:
+            return handler.postUserIntoContactList(cl_id, request.args)
+        else:
+            return jsonify(Error="Malformed request."), 405
+    elif request.method == 'DELETE':
+        if request.args:
+            return handler.deleteUserFromContactList(cl_id, request.args)
+        else:
+            return jsonify(Error="Malformed request."), 405
     else:
         return jsonify(Error="Method not allowed."), 405
 
@@ -314,7 +273,7 @@ def doByPostId(post_id):
     elif request.method == 'POST':
         return handler.createPost(post_id, request.args)
     elif request.method == 'PUT':
-        return handler.updatePost(post_id)
+        return handler.updatePost(post_id, request.args)
     elif request.method == 'DELETE':
         return handler.deletePost(post_id)
     else:
@@ -330,6 +289,14 @@ def getUsersWhoLikesPost(post_id):
     else:
         return jsonify(Error="Method not allowed"), 405
 
+# See the photos, the original message that came with the photo, and any replies
+@app.route('/Sheeple/posts-and-replies', methods=['GET'])
+def doGetPostsReplies():
+    handler = postHandler()
+    if request.method == 'GET':
+       return handler.getPostsReplies()
+    else:
+        return jsonify(Error="Method not allowed."), 405
 
 @app.route('/Sheeple/posts/<int:post_id>/dislikes', methods=['GET'])
 def getUsersWhoDisikesPost(post_id):
@@ -341,8 +308,23 @@ def getUsersWhoDisikesPost(post_id):
     else:
         return jsonify(Error="Method not allowed"), 405
 
+# Like or dislike a photo posted on a chat group:
+@app.route('/Sheeple/posts/<int:post_id>/<string:reaction_type>/<int:user_id>', methods=['POST'])
+def reactPost(post_id, reaction_type, user_id):
+    handler = postHandler()
+    if request.method == 'POST':
+        return handler.reactPost(post_id, reaction_type, user_id)
+    else:
+        return jsonify(Error="Method not allowed."), 405
 
-
+# Reply to the original photo message posted on a chat group
+@app.route('/Sheeple/posts/<int:post_id>/reply/<int:original>', methods= ['POST'])
+def replyPost(post_id, original):
+    handler = postHandler()
+    if request.method == 'POST':
+        return handler.replyPost(post_id, original, request.args)
+    else:
+        return jsonify(Error="Method not allowed."), 405
 # -----------------------------End Post-------------------------------#
 
 

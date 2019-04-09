@@ -141,11 +141,8 @@ class contactListHandler:
         param7 = args.get('phone')
         if param0 and param1 and param3 and param4 and (param6 or param7) and cl_id:
             result = self.build_contactList_ByAttribute_dict(param0, cl_id, param1, param3, param4, param6, param7)
-        if result is None:
+        else:
             return jsonify(Error="User not added"), 404
-        # mapped_result = []
-        # for r in result:
-        #     mapped_result.append(self.build_contactList_ByUsers_dict(r))
         return jsonify(AddedContact=result)
 
     def deleteUserFromContactList(self, cl_id, args):

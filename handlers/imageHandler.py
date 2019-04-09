@@ -82,7 +82,7 @@ class imageHandler:
     def updateImage(self, image_id, args):
         dao = ImageDAO()
         image_url = args.get('image_url')
-        img = self.build_image_dict(dao.getImagesById(image_id))
+        img = self.build_pimg_dict(dao.getImagesById(image_id))
         img.__setitem__('image_url', image_url)
         return jsonify(UpdateImage=img), 201
 
@@ -93,8 +93,9 @@ class imageHandler:
     def createImage(self, image_id, args):
         image_url = args.get('image_url')
         post_id = args.get('post_id')
-
-        result = self.build_image_attributes(image_id, image_url, post_id)
+        result = []
+        if image_url and post_id:
+            result = self.build_image_attributes(image_id, image_url, post_id)
         return jsonify(CreateImage=result), 201
 
 
