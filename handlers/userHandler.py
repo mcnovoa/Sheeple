@@ -126,8 +126,7 @@ class userHandler:
         if not dao.getUserByID(user_id):
             return jsonify(Error="User not found."), 404
         else:
-            result = dao.getUserByID(user_id)
-
+            result = dao.deleteUser(user_id)
         return jsonify(DeleteStatus=result), 200
 
     def getUserByUsernameAndPassword(self, args):

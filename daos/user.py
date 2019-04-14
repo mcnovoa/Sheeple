@@ -103,20 +103,23 @@ class UserDAO:
         query = "insert into Users(username, password, first_name, last_name, gender, email)" \
                 "values (%s, %s, %s, %s, %s, %s) returning user_id;"
         user_id = cursor.execute(query, (username, password, first_name, last_name, gender, email,))
-        # user_id = cursor.fetchone()
+        result = cursor.fetchone()
         query = "insert into PhoneNumber(user_id, phone)" \
                 "values (%s, %s);"
-        cursor.execute(query, (user_id, phone))
+        cursor.execute(query, (result, phone))
         self.conn.commit()
-        return user_id
+        return result
 
     def deleteUser(self, user_id):
+        result = self.getUserByID(user_id)
         cursor = self.conn.cursor()
         query = "delete from IsPart where user_id = %s;"
+        cursor.execute(query, (user_id,))
+        query = "delete from ContactList where owner_id = %s;"
         cursor.execute(query, (user_id,))
         query = "delete from PhoneNumber where user_id = %s;"
         cursor.execute(query, (user_id,))
         query = "delete from Users where user_id = %s;"
         cursor.execute(query, (user_id,))
         self.conn.commit()
-        return user_id
+        return result
