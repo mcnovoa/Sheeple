@@ -81,7 +81,7 @@ class userHandler:
         return jsonify(User=mapped_result)
 
     def createUser(self, args):
-        param0 = args.get('user_id')
+        dao = UserDAO()
         param1 = args.get('username')
         param2 = args.get('password')
         param3 = args.get('first_name')
@@ -90,8 +90,9 @@ class userHandler:
         param6 = args.get('email')
         param7 = args.get('phone')
 
-        if param0 and param1 and param2 and param3 and param4 and param5 and param6 and param7:
-            result = self.build_user_attributes(param0, param1, param2, param3, param4, param5, param6, param7)
+        if param1 and param2 and param3 and param4 and param5 and param6 and param7:
+            user_id = dao.insertUser(param1, param2, param3, param4, param5, param6, param7)
+            result = self.build_user_attributes(user_id, param1, param2, param3, param4, param5, param6, param7)
             return jsonify(CreateStatus=result), 201
         else:
             return jsonify(Error="Unexpected attributes in post request"), 400
