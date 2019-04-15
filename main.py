@@ -341,6 +341,7 @@ def getAllUsers():
         return handler.createUser(request.args)
 
 
+
 @app.route('/Sheeple/users/<int:user_id>', methods=['GET', 'PUT', "DELETE"])
 def doUsersById(user_id):
     handler = userHandler()
