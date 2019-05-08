@@ -1,7 +1,7 @@
 from flask import jsonify
 
 from daos.groupChat import groupChatDAO
-from daos.user import UserDAO
+
 
 
 class groupChatHandler:
@@ -26,6 +26,12 @@ class groupChatHandler:
         groupchat['username'] = row[0]
         groupchat['first_name'] = row[1]
         groupchat['last_name'] = row[2]
+
+        return groupchat
+
+    def build_user_dict(self, row):
+        groupchat = {}
+        groupchat['user_id'] = row[0]
 
         return groupchat
 
@@ -77,9 +83,29 @@ class groupChatHandler:
         if not result:
             return jsonify(Error="Is not Admin for Groupchat")
         else:
+
+            postids = dao.getPostIdInGroupChat(gc_id)
+            for id in postids:
+
+                # Stuff to delete:
+
+                # delete images
+                dao.deleteImagesByPostId(id)
+
+                # delete hashtag from hashashtag
+                dao.deleteHashtagByPostId(id)
+
+                # delete reactions
+                dao.deleteReactionsByPostId(id)
+
+                # delete from isReplies
+                dao.deleteRepliesByPostId(id)
+
+            dao.deletePostsInGroupChat(gc_id)
+
             dao.deleteAllUsersFromGroupChat(gc_id)
-            id = dao.deleteGroupChat(gc_id)
-            return jsonify(DeleteGroupChat=id), 200
+            ids = dao.deleteGroupChat(gc_id)
+            return jsonify(DeleteGroupChat=ids), 200
 
     def postGroupChat(self, gc_name, admin_id):
 
@@ -112,6 +138,18 @@ class groupChatHandler:
         id = dao.deleteUserFromGroupChat(gc_id, user_id)
 
         return jsonify(UserDeleted = id), 200
+
+    def getUserInChatById(self, gc_id, user_id):
+        dao = groupChatDAO()
+        id = dao.getUserInChatById(gc_id, user_id)
+
+        if id is None:
+            return jsonify(Error="NOT FOUND"), 404
+        else:
+            mapped_result = []
+            for row in id:
+                mapped_result.append(self.build_useringroupchat_dict(row))
+            return jsonify(User=mapped_result), 200
 
     def getGroupChatsForUser(self, user_id):
         dao = groupChatDAO()

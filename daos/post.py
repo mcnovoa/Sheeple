@@ -53,13 +53,4 @@ class PostDAO:
 
         return result
 
-    def getUserWhoDislikesPost(self, post_id):
-        c = self.conn.cursor()
-        query = "select post_id, username from users natural inner join reacts where post_id = %s and reaction_type = 'dislike';"
-        c.execute(query, (post_id,))
-        result = []
-        for row in c:
-            result.append(row)
-
-        return result
 

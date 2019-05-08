@@ -48,6 +48,15 @@ def popularHashtags():
     else:
         return jsonify(Error="Method not allowed")
 
+
+@app.route('/Sheeple/posts/<int:post_id>/reply/<int:original>', methods=['POST'])
+def replyPost(post_id, original):
+    handler = postHandler()
+    if request.method == 'POST':
+        return handler.replyPost(post_id, original, request.args)
+    else:
+        return jsonify(Error="Method not allowed."), 405
+#
 # # ------------------- ----Second Phase-------------------------#
 #
 @app.route('/Sheeple/posts', methods=['GET'])
@@ -164,17 +173,24 @@ def getAllGroupchats():
         return handler.getAllGroupChats()
 
 
-@app.route('/Sheeple/groupchats/<int:gc_id>', methods=['GET', 'PUT', 'DELETE'])
+@app.route('/Sheeple/groupchats/<int:gc_id>', methods=['GET', 'PUT'])
 def doByGroupChatId(gc_id):
     handler = groupChatHandler()
     if request.method == 'GET':
         return groupChatHandler().getGroupChatById(gc_id)
     elif request.method == 'PUT':
         return handler.updateGroupChat(gc_id, request.form)
-    elif request.method == 'DELETE':
-        return handler.deleteGroupChat(gc_id)
     else:
         return jsonify(Error="Method not allowed."), 405
+
+
+@app.route('/Sheeple/groupchats/<int:gc_id>/<int:admin_id>/delete', methods=['DELETE'])
+def deleteGroupChat(gc_id, admin_id):
+    handler = groupChatHandler()
+    if request.method == 'DELETE':
+        return handler.deleteGroupChat(gc_id, admin_id)
+    else:
+        return jsonify(Error="Method not allowed"), 405
 
 
 @app.route('/Sheeple/groupchats/<int:gc_id>/users', methods=['GET'])
@@ -186,7 +202,8 @@ def getAllGroupChatUsers(gc_id):
     else:
         jsonify(Error="Method not allowed."), 405
 
-@app.route('/Sheeple/groupchats/<int:gc_id>/<int:user_id>', methods=['POST', 'DELETE'])
+
+@app.route('/Sheeple/groupchats/<int:gc_id>/<int:user_id>', methods=['POST', 'DELETE', 'GET'])
 def addOrDeleteUserFromGroupchat(gc_id, user_id):
     handler = groupChatHandler()
 
@@ -194,6 +211,8 @@ def addOrDeleteUserFromGroupchat(gc_id, user_id):
         return handler.addUserToGroupChat(gc_id, user_id)
     elif request.method == 'DELETE':
         return handler.deleteUserFromGroupChat(gc_id, user_id)
+    elif request.method == 'GET':
+        return handler.getUserInChatById(gc_id, user_id)
     else:
         jsonify(Error = "Method not allowed"), 405
 
@@ -204,6 +223,8 @@ def getGroupchatsForUser(user_id):
         return handler.getGroupChatsForUser(user_id)
     else:
         return jsonify(Error="Method not allowed"), 405
+
+
 
 # -------------------------End Groupchats--------------------------#
 
