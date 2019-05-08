@@ -29,6 +29,8 @@ class postHandler:
         p['post_content'] = row[1]
         p['user_id'] = row[2]
 
+        return p
+
     def build_react_dict(self, row):
         p={}
         p['post_id'] = row[0]
