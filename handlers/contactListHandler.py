@@ -69,9 +69,9 @@ class contactListHandler:
 
         return jsonify(ContactList=mapped_result)
 
-    def searchContactLists(self, args):
+    def searchContactLists(self, json):
         dao = contactListDAO()
-        param1 = args.get('owner_id')
+        param1 = json['owner_id']
 
         if param1:
             result = dao.getContactListsByOwnerId(param1)
@@ -105,12 +105,12 @@ class contactListHandler:
             return jsonify(Error="NOT FOUND"), 404
         return jsonify(ContactList=mapped_result)
 
-    def postUserIntoContactList(self, owner_id, args):
+    def postUserIntoContactList(self, owner_id, json):
         dao = contactListDAO()
-        param3 = args.get('first_name')
-        param4 = args.get('last_name')
-        param6 = args.get('email')
-        param7 = args.get('phone')
+        param3 = json['first_name']
+        param4 = json['last_name']
+        param6 = json['email']
+        param7 = json['phone']
         if param3 and param4 and (param6 or param7) and owner_id:
             result = dao.insertUserIntoContactList(param3, param4, param6, param7, owner_id)
             return jsonify(AddedContact=result)
@@ -118,12 +118,12 @@ class contactListHandler:
             return jsonify(Error="Invalid parameters. Please try again"), 404
 
 
-    def deleteUserFromContactList(self, owner_id, args):
+    def deleteUserFromContactList(self, owner_id, json):
         dao = contactListDAO()
-        param3 = args.get('first_name')
-        param4 = args.get('last_name')
-        param6 = args.get('email')
-        param7 = args.get('phone')
+        param3 = json['first_name']
+        param4 = json['last_name']
+        param6 = json['email']
+        param7 = json['phone']
         if param3 and param4 and (param6 or param7) and owner_id:
             result = dao.deleteUserIntoContactList(param3, param4, param6, param7, owner_id)
             return jsonify(DeletedContact=result)

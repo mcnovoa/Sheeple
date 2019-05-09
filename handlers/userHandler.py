@@ -47,15 +47,15 @@ class userHandler:
 
         return jsonify(User=mapped_result)
 
-    def searchUsers(self, args):
+    def searchUsers(self, json):
         dao = UserDAO()
-        param1 = args.get('username')
-        param2 = args.get('password')
-        param3 = args.get('first_name')
-        param4 = args.get('last_name')
-        param5 = args.get('gender')
-        param6 = args.get('email')
-        param7 = args.get('phone')
+        param1 = json['username']
+        param2 = json['password']
+        param3 = json['first_name']
+        param4 = json['last_name']
+        param5 = json['gender']
+        param6 = json['email']
+        param7 = json['phone']
 
         if param1:
             result = dao.getUserByUsername(param1)
@@ -79,15 +79,15 @@ class userHandler:
 
         return jsonify(User=mapped_result)
 
-    def createUser(self, args):
+    def createUser(self,json):
         dao = UserDAO()
-        param1 = args.get('username')
-        param2 = args.get('password')
-        param3 = args.get('first_name')
-        param4 = args.get('last_name')
-        param5 = args.get('gender')
-        param6 = args.get('email')
-        param7 = args.get('phone')
+        param1 = json['username']
+        param2 = json['password']
+        param3 = json['first_name']
+        param4 = json['last_name']
+        param5 = json['gender']
+        param6 = json['email']
+        param7 = json['phone']
 
         if param1 and param2 and param3 and param4 and param5 and param6 and param7:
             user_id = dao.insertUser(param1, param2, param3, param4, param5, param6, param7)
@@ -96,17 +96,17 @@ class userHandler:
         else:
             return jsonify(Error="Unexpected attributes in post request"), 400
 
-    def updateUser(self, user_id, args):
+    def updateUser(self, user_id, json):
         dao = UserDAO()
         if dao.getUserByID(user_id):
-            param0 = args.get('user_id')
-            param1 = args.get('username')
-            param2 = args.get('password')
-            param3 = args.get('first_name')
-            param4 = args.get('last_name')
-            param5 = args.get('gender')
-            param6 = args.get('email')
-            param7 = args.get('phone')
+            param0 = json['user_id']
+            param1 = json['username']
+            param2 = json['password']
+            param3 = json['first_name']
+            param4 = json['last_name']
+            param5 = json['gender']
+            param6 = json['email']
+            param7 = json['phone']
             if param0 != user_id:
                 return jsonify(Error="User_id does not match"), 400
             elif param0 and param1 and param2 and param3 and param4 and param5 and param6 and param7:
@@ -127,10 +127,10 @@ class userHandler:
     #         result = dao.deleteUser(user_id)
     #     return jsonify(DeleteStatus=result), 200
 
-    def getUserByUsernameAndPassword(self, args):
+    def getUserByUsernameAndPassword(self, json):
         dao = UserDAO()
-        username = args.get('username')
-        password = args.get('password')
+        username = json['username']
+        password = json['password']
         result = dao.getUserByUsernameAndPassword(username, password)
         if not result:
             return jsonify(Error="Incorrect username or password. Please try again"), 400

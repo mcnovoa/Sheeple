@@ -23,13 +23,13 @@ def welcomesheeple():
 @app.route("/Sheeple/register", methods=['POST'])
 def register():
     if request.method =='POST':
-        return userHandler().createUser(request.args)
+        return userHandler().createUser(request.json)
 
 # Login page
 @app.route("/Sheeple/login", methods=['POST'])
 def login():
     if request.method == 'POST':
-        return userHandler().getUserByUsernameAndPassword(request.args)
+        return userHandler().getUserByUsernameAndPassword(request.json)
 
 # ------------------------Dashboard ----------------------------#
 @app.route('/Sheeple/dashboard/posts', methods= ['GET'])
@@ -113,8 +113,8 @@ def getGroupChatByOwner(gc_id):
 def getAllContactLists():
     handler = contactListHandler()
     if request.method == 'GET':
-        if request.args:
-            return handler.searchContactLists(request.args)
+        if request.json:
+            return handler.searchContactLists(request.json)
         else:
             return handler.getAllContactLists()
     else:
@@ -133,13 +133,13 @@ def doContactListById(cl_id):
 def addOrDeleteFromContactList(owner_id):
     handler = contactListHandler()
     if request.method == 'POST':
-        if request.args:
-            return handler.postUserIntoContactList(owner_id, request.args)
+        if request.json:
+            return handler.postUserIntoContactList(owner_id, request.json)
         else:
             return jsonify(Error="Malformed request."), 405
     elif request.method == 'DELETE':
-        if request.args:
-            return handler.deleteUserFromContactList(owner_id, request.args)
+        if request.json:
+            return handler.deleteUserFromContactList(owner_id, request.json)
         else:
             return jsonify(Error="Malformed request."), 405
     else:
@@ -346,12 +346,12 @@ def replyPost(post_id, original):
 def getAllUsers():
     handler = userHandler()
     if request.method == 'GET':
-        if request.args:
-            return handler.searchUsers(request.args)
+        if request.json:
+            return handler.searchUsers(request.json)
         else:
             return handler.getAllUsers()
     else:
-        return handler.createUser(request.args)
+        return handler.createUser(request.json)
 
 
 
@@ -361,7 +361,7 @@ def doUsersById(user_id):
     if request.method == 'GET':
         return handler.getUserByID(user_id)
     elif request.method == 'PUT':
-        return handler.updateUser(user_id, request.args)
+        return handler.updateUser(user_id, request.json)
     else:
         return handler.deleteUser(user_id)
 
