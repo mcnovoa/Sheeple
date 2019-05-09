@@ -69,6 +69,7 @@ def getAllPosts():
         return jsonify(Error="Method not allowed."), 405
 
 
+
 @app.route('/Sheeple/posts/reactions/<string:reaction_type>/<int:post_id>', methods=['GET'])
 def getNumOfReactions(post_id, reaction_type):
     handler = postHandler()
