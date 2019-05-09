@@ -10,6 +10,12 @@ class hashtagHandler:
             hashtag['content'] = row[1]
             return hashtag
 
+    def build_content_dict(self,row):
+            hashtag = {}
+            hashtag['content'] = row[0]
+
+            return hashtag
+
     def build_dashboard_dict(self, row):
         hashtag = {}
         hashtag['Hashtag'] = row[0]
@@ -70,11 +76,26 @@ class hashtagHandler:
 
         return jsonify(Hashtag = mapped_result), 200
 
-    def postHashtag(self):
-        return jsonify(CreateHashtag="CREATED"), 201
+    def postHashtag(self, content):
+        dao = hashtagDAO()
+
+        # returns a list of tuples
+        list = dao.getAllHashtagContent()
+
+        # mapped_result = []
+        # for row in list:
+        #     mapped_result.append(self.build_content_dict(row))
+
+        for row in list:
+            # check first value of tuple
+            if row[0] == content:
+                return jsonify(Hashtag="ERROR: Already exists"), 409
+
+        dao.postHashtag(content)
+        return jsonify(CreatedHashtag="OK"), 201
 
     def updateHashtag(self):
-        return jsonify(UpdatePerson="OK"), 200
+        return jsonify(UpdateHashtag="OK"), 200
 
     def deleteHashtag(self):
-        return jsonify(DeletePerson="OK"), 200
+        return jsonify(DeleteHashtag="OK"), 200
