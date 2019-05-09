@@ -23,7 +23,7 @@ def welcomesheeple():
 @app.route("/Sheeple/register", methods=['POST'])
 def register():
     if request.method =='POST':
-        return userHandler().createUser(request.json)
+        return userHandler().createUser(request.json    )
 
 # Login page
 @app.route("/Sheeple/login", methods=['POST'])
