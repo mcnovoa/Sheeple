@@ -85,16 +85,6 @@ class contactListHandler:
 
         return jsonify(ContactList=mapped_result)
 
-    def postContactList(self, args):
-        param0 = args.get('cl_id')
-        param1 = args.get('owner_id')
-
-        if param0 and param1:
-            result = self.build_user_attributes(param0, param1)
-            return jsonify(CreateStatus=result), 201
-        else:
-            return jsonify(Error="Unexpected attributes in post request"), 400
-
     def getUserFromContactList(self, cl_id):
         dao = contactListDAO()
         result = dao.getUsersFromContactList(cl_id)
@@ -107,7 +97,7 @@ class contactListHandler:
 
     def getContactListByOwnerId(self, owner_id):
         dao = contactListDAO()
-        result = dao.getContactListByOwnerId(owner_id)
+        result = dao.getFullContactListByOwnerId(owner_id)
         mapped_result = []
         for r in result:
             mapped_result.append(self.build_contactList_ByOwner_dict(r))

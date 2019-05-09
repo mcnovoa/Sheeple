@@ -49,13 +49,13 @@ def popularHashtags():
         return jsonify(Error="Method not allowed")
 
 
-@app.route('/Sheeple/posts/<int:post_id>/reply/<int:original>', methods=['POST'])
-def replyPost(post_id, original):
-    handler = postHandler()
-    if request.method == 'POST':
-        return handler.replyPost(post_id, original, request.args)
-    else:
-        return jsonify(Error="Method not allowed."), 405
+# @app.route('/Sheeple/posts/<int:post_id>/reply/<int:original>', methods=['POST'])
+# def replyPost(post_id, original):
+#     handler = postHandler()
+#     if request.method == 'POST':
+#         return handler.replyPost(post_id, original, request.args)
+#     else:
+#         return jsonify(Error="Method not allowed."), 405
 #
 # # ------------------- ----Second Phase-------------------------#
 #
@@ -78,7 +78,6 @@ def getNumOfReactions(post_id, reaction_type):
         return jsonify(Error="Method not allowed."), 405
 
 
-# Adds, Deletes or Gets the users in a given Contact List
 @app.route('/Sheeple/contactlists/user/<int:user_id>', methods=['GET'])
 def getContactListByUser_id(user_id):
     handler = contactListHandler()
@@ -109,7 +108,7 @@ def getGroupChatByOwner(gc_id):
 
 # --------------------Start Contact Lists----------------------#
 
-@app.route('/Sheeple/contactlists', methods=['GET', 'POST'])
+@app.route('/Sheeple/contactlists', methods=['GET'])
 def getAllContactLists():
     handler = contactListHandler()
     if request.method == 'GET':
@@ -117,22 +116,14 @@ def getAllContactLists():
             return handler.searchContactLists(request.args)
         else:
             return handler.getAllContactLists()
-    elif request.method == 'PUT':
-        return handler.postContactList(request.args)
     else:
         return jsonify(Error="Method not allowed."), 405
 #
-@app.route('/Sheeple/contactlists/<int:cl_id>', methods=['GET', 'PUT', 'DELETE'])
+@app.route('/Sheeple/contactlists/<int:cl_id>', methods=['GET'])
 def doContactListById(cl_id):
     handler = contactListHandler()
     if request.method == 'GET':
         return handler.getContactListByID(cl_id)
-    elif request.method == 'PUT':
-        pass
-        # return handler.updateContactList(cl_id, request.args)
-    elif request.method == 'DELETE':
-        pass
-        # return handler.deleteContactList(cl_id)
     else:
         return jsonify(Error="Method not allowed."), 405
 
