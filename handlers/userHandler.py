@@ -2,7 +2,6 @@ from flask import jsonify
 
 from daos.user import UserDAO
 
-
 class userHandler:
 
     def build_user_dict(self, row):
@@ -14,7 +13,7 @@ class userHandler:
         result['last_name'] = row[4]
         result['gender'] = row[5]
         result['email'] = row[6]
-        result['phone'] = row[8]
+        result['phone'] = row[7]
         return result
 
     def build_user_attributes(self, user_id, username, password, first_name, last_name, gender, email, phone):
@@ -108,7 +107,6 @@ class userHandler:
             param5 = args.get('gender')
             param6 = args.get('email')
             param7 = args.get('phone')
-
             if param0 != user_id:
                 return jsonify(Error="User_id does not match"), 400
             elif param0 and param1 and param2 and param3 and param4 and param5 and param6 and param7:
@@ -121,13 +119,13 @@ class userHandler:
             return jsonify(Error="User not found."), 404
 
 
-    def deleteUser(self, user_id):
-        dao = UserDAO()
-        if not dao.getUserByID(user_id):
-            return jsonify(Error="User not found."), 404
-        else:
-            result = dao.deleteUser(user_id)
-        return jsonify(DeleteStatus=result), 200
+    # def deleteUser(self, user_id):
+    #     dao = UserDAO()
+    #     if not dao.getUserByID(user_id):
+    #         return jsonify(Error="User not found."), 404
+    #     else:
+    #         result = dao.deleteUser(user_id)
+    #     return jsonify(DeleteStatus=result), 200
 
     def getUserByUsernameAndPassword(self, args):
         dao = UserDAO()
