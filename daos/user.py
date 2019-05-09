@@ -98,5 +98,28 @@ class UserDAO:
             return None
         return result
 
+    def insertUser(self, username, password, first_name, last_name, gender, email, phone):
+        cursor = self.conn.cursor()
+        query = "insert into Users(username, password, first_name, last_name, gender, email)" \
+                "values (%s, %s, %s, %s, %s, %s) returning user_id;"
+        user_id = cursor.execute(query, (username, password, first_name, last_name, gender, email,))
+        result = cursor.fetchone()
+        query = "insert into PhoneNumber(user_id, phone)" \
+                "values (%s, %s);"
+        cursor.execute(query, (result, phone))
+        self.conn.commit()
+        return result
 
-#more methods need to be added due to routes.
+    def deleteUser(self, user_id):
+        result = self.getUserByID(user_id)
+        cursor = self.conn.cursor()
+        query = "delete from IsPart where user_id = %s;"
+        cursor.execute(query, (user_id,))
+        query = "delete from ContactList where owner_id = %s;"
+        cursor.execute(query, (user_id,))
+        query = "delete from PhoneNumber where user_id = %s;"
+        cursor.execute(query, (user_id,))
+        query = "delete from Users where user_id = %s;"
+        cursor.execute(query, (user_id,))
+        self.conn.commit()
+        return result
