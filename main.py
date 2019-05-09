@@ -137,17 +137,17 @@ def doContactListById(cl_id):
         return jsonify(Error="Method not allowed."), 405
 
 # Add or Delete Contact from contact list of user X
-@app.route('/Sheeple/contactlists/<int:cl_id>/user', methods=['DELETE', 'POST'])
-def addOrDeleteFromContactList(cl_id):
+@app.route('/Sheeple/contactlists/<int:owner_id>/user', methods=['DELETE', 'POST'])
+def addOrDeleteFromContactList(owner_id):
     handler = contactListHandler()
     if request.method == 'POST':
         if request.args:
-            return handler.postUserIntoContactList(cl_id, request.args)
+            return handler.postUserIntoContactList(owner_id, request.args)
         else:
             return jsonify(Error="Malformed request."), 405
     elif request.method == 'DELETE':
         if request.args:
-            return handler.deleteUserFromContactList(cl_id, request.args)
+            return handler.deleteUserFromContactList(owner_id, request.args)
         else:
             return jsonify(Error="Malformed request."), 405
     else:
