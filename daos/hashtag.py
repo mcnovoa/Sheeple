@@ -20,6 +20,15 @@ class hashtagDAO:
             result.append(row)
         return result
 
+    def getAllHashtagContent(self):
+        cursor = self.conn.cursor()
+        query = "select hashtag_content from hashtag;"
+        cursor.execute(query)
+        result = []
+        for row in cursor:
+            result.append(row)
+        return result
+
     def getHashtagById(self, hashtag_id):
         cursor = self.conn.cursor()
         query = "select * from hashtag where hashtag_id=%s;"
@@ -47,4 +56,11 @@ class hashtagDAO:
         for row in cursor:
             result.append(row)
         return result
+
+    def postHashtag(self, content):
+        cursor = self.conn.cursor()
+        query = "insert into Hashtag(hashtag_content) values(%s)"
+        cursor.execute(query, (content,))
+
+        self.conn.commit()
 

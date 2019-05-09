@@ -46,7 +46,7 @@ def popularHashtags():
     if request.method == 'GET':
         return handler.getPopularHashtags()
     else:
-        return jsonify(Error="Method not allowed")
+        return jsonify(Error="Method not allowed ")
 
 
 # @app.route('/Sheeple/posts/<int:post_id>/reply/<int:original>', methods=['POST'])
@@ -156,11 +156,10 @@ def getAllGroupchats():
     handler = groupChatHandler()
 
     if request.method == 'POST':
-        gc_name = request.args.get('gc_name')
-        admin_id = request.args.get('admin_id')
-        return handler.postGroupChat(gc_name, admin_id)
+
+        return handler.postGroupChat(request.get_json)
     elif request.args:
-        return handler.searchByArgs(request.args)
+        return handler.searchByArgs(request.get_json)
     else:
         return handler.getAllGroupChats()
 
@@ -208,6 +207,7 @@ def addOrDeleteUserFromGroupchat(gc_id, user_id):
     else:
         jsonify(Error = "Method not allowed"), 405
 
+
 @app.route('/Sheeple/groupchats/user/<int:user_id>', methods=['GET'])
 def getGroupchatsForUser(user_id):
     handler = groupChatHandler()
@@ -222,22 +222,23 @@ def getGroupchatsForUser(user_id):
 
 #------------------------Start Hashtag--------------------------------#
 
+
 @app.route('/Sheeple/hashtags', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def getAllHashtags():
     handler = hashtagHandler()
     if request.method == 'GET':
         if request.args:
-            return handler.searchHashtags(request.args)
+            return handler.searchHashtags(request.json)
         else:
-            handler = hashtagHandler()
             return handler.getAllHashtags()
-    elif request.method == 'POST':
-        return handler.postHashtag()
+    # elif request.method == 'POST':
+    #     return handler.postHashtag(request.json)
     elif request.method == 'PUT':
         return handler.updateHashtag()
-    else:
+    elif request.method == 'DELETE':
         return handler.deleteHashtag()
-
+    else:
+        return jsonify(Error="Method not allowed")
 
 
 @app.route('/Sheeple/hashtags/<int:id>', methods=['GET'])
