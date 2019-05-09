@@ -104,6 +104,23 @@ class groupChatDAO:
         id = cursor.fetchone()[0]
         return id
 
+    def getUserInChatById(self, gc_id, user_id):
+        cursor = self.conn.cursor()
+        query = "select U.user_id,U.username,U.first_name,U.last_name from belongsto natural inner join users as U where gc_id=%s AND user_id=%s"
+        cursor.execute(query, (gc_id, user_id,))
+        result = []
+        for row in cursor:
+            result.append(row)
+        return result
+
+    def deleteAllUsersFromGroupChat(self, gc_id):
+        cursor = self.conn.cursor()
+        query ="delete from belongsto where gc_id=%s;"
+        cursor.execute(query, (gc_id,))
+        self.conn.commit()
+        id = cursor.fetchone()[0]
+        return id
+
     def deleteAllUsersFromGroupChat(self, gc_id):
         cursor = self.conn.cursor()
         query ="delete from belongsto where gc_id=%s;"
@@ -117,4 +134,46 @@ class groupChatDAO:
         result = []
         for row in cursor:
             result.append(row)
+
         return result
+
+    def getPostIdInGroupChat(self, gc_id):
+        cursor = self.conn.cursor()
+        query = "select post_id from post where gc_id = %s;"
+        cursor.execute(query, (gc_id, ))
+        result = []
+        for row in cursor:
+            result.append(row)
+        return result
+
+    def deleteImagesByPostId(self, post_id):
+        cursor = self.conn.cursor()
+        query = "delete from images where post_id = %s;"
+        cursor.execute(query, (post_id,))
+        self.conn.commit()
+
+    def deleteHashtagByPostId(self, post_id):
+        cursor = self.conn.cursor()
+        query = "delete from hashashtag where post_id = %s;"
+        cursor.execute(query, (post_id,))
+        self.conn.commit()
+
+    def deleteReactionsByPostId(self, post_id):
+        cursor = self.conn.cursor()
+        query = "delete from reacts where post_id = %s;"
+        cursor.execute(query, (post_id,))
+        self.conn.commit()
+
+    def deletePostsInGroupChat(self, gc_id):
+        cursor = self.conn.cursor()
+        query = "delete from post where gc_id = %s;"
+        cursor.execute(query, (gc_id,))
+        self.conn.commit()
+
+    def deleteRepliesByPostId(self, post_id):
+        cursor = self.conn.cursor()
+        query = 'delete from isreply where original = %s'
+        cursor.execute(query, (post_id, ))
+        self.conn.commit()
+
+

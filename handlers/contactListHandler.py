@@ -69,9 +69,9 @@ class contactListHandler:
 
         return jsonify(ContactList=mapped_result)
 
-    def searchContactLists(self, args):
+    def searchContactLists(self, json):
         dao = contactListDAO()
-        param1 = args.get('owner_id')
+        param1 = json['owner_id']
 
         if param1:
             result = dao.getContactListsByOwnerId(param1)
@@ -85,33 +85,6 @@ class contactListHandler:
 
         return jsonify(ContactList=mapped_result)
 
-    def postContactList(self, args):
-        param0 = args.get('cl_id')
-        param1 = args.get('owner_id')
-
-        if param0 and param1:
-            result = self.build_user_attributes(param0, param1)
-            return jsonify(CreateStatus=result), 201
-        else:
-            return jsonify(Error="Unexpected attributes in post request"), 400
-
-    # def updateContactList(self, cl_id, args):
-    #     param0 = args.get('cl_id')
-    #     param1 = args.get('owner_id')
-    #     if param0 and param1:
-    #         result = self.build_user_attributes(param0, param1)
-    #         return jsonify(UpdateStatus=result), 201
-    #     else:
-    #         return jsonify(Error="Unexpected attributes in post request"), 400
-    #
-    # def deleteContactList(self, cl_id):
-    #     dao = contactListDAO()
-    #     if not dao.getContactListByID(cl_id):
-    #         return jsonify(Error="User not found."), 404
-    #     else:
-    #         result = dao.getContactListByID(cl_id)
-    #     return jsonify(DeleteStatus=result), 200
-
     def getUserFromContactList(self, cl_id):
         dao = contactListDAO()
         result = dao.getUsersFromContactList(cl_id)
@@ -124,7 +97,7 @@ class contactListHandler:
 
     def getContactListByOwnerId(self, owner_id):
         dao = contactListDAO()
-        result = dao.getContactListByOwnerId(owner_id)
+        result = dao.getFullContactListByOwnerId(owner_id)
         mapped_result = []
         for r in result:
             mapped_result.append(self.build_contactList_ByOwner_dict(r))
@@ -132,29 +105,30 @@ class contactListHandler:
             return jsonify(Error="NOT FOUND"), 404
         return jsonify(ContactList=mapped_result)
 
-    def postUserIntoContactList(self, cl_id, args):
-        param0 = args.get('user_id')
-        param1 = args.get('username')
-        param3 = args.get('first_name')
-        param4 = args.get('last_name')
-        param6 = args.get('email')
-        param7 = args.get('phone')
-        if param0 and param1 and param3 and param4 and (param6 or param7) and cl_id:
-            result = self.build_contactList_ByAttribute_dict(param0, cl_id, param1, param3, param4, param6, param7)
-        else:
-            return jsonify(Error="User not added"), 404
-        return jsonify(AddedContact=result)
-
-    def deleteUserFromContactList(self, cl_id, args):
+    def postUserIntoContactList(self, owner_id, json):
         dao = contactListDAO()
-        user_id = args.get('user_id')
-        result = dao.getUserFromContactListById(cl_id, user_id)
-        mapped_result = []
-        for r in result:
-            mapped_result.append(self.build_contactList_ByUsers_dict(r))
-        if mapped_result is None:
-            return jsonify(Error="NOT FOUND"), 404
-        return jsonify(DeletedContact=mapped_result)
+        param3 = json['first_name']
+        param4 = json['last_name']
+        param6 = json['email']
+        param7 = json['phone']
+        if param3 and param4 and (param6 or param7) and owner_id:
+            result = dao.insertUserIntoContactList(param3, param4, param6, param7, owner_id)
+            return jsonify(AddedContact=result)
+        else:
+            return jsonify(Error="Invalid parameters. Please try again"), 404
+
+
+    def deleteUserFromContactList(self, owner_id, json):
+        dao = contactListDAO()
+        param3 = json['first_name']
+        param4 = json['last_name']
+        param6 = json['email']
+        param7 = json['phone']
+        if param3 and param4 and (param6 or param7) and owner_id:
+            result = dao.deleteUserIntoContactList(param3, param4, param6, param7, owner_id)
+            return jsonify(DeletedContact=result)
+        else:
+            return jsonify(Error="Invalid parameters. Please try again"), 404
 
 
 

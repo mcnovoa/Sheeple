@@ -2,7 +2,6 @@ from flask import jsonify
 
 from daos.user import UserDAO
 
-
 class userHandler:
 
     def build_user_dict(self, row):
@@ -14,7 +13,7 @@ class userHandler:
         result['last_name'] = row[4]
         result['gender'] = row[5]
         result['email'] = row[6]
-        result['phone'] = row[8]
+        result['phone'] = row[7]
         return result
 
     def build_user_attributes(self, user_id, username, password, first_name, last_name, gender, email, phone):
@@ -48,15 +47,15 @@ class userHandler:
 
         return jsonify(User=mapped_result)
 
-    def searchUsers(self, args):
+    def searchUsers(self, json):
         dao = UserDAO()
-        param1 = args.get('username')
-        param2 = args.get('password')
-        param3 = args.get('first_name')
-        param4 = args.get('last_name')
-        param5 = args.get('gender')
-        param6 = args.get('email')
-        param7 = args.get('phone')
+        param1 = json['username']
+        param2 = json['password']
+        param3 = json['first_name']
+        param4 = json['last_name']
+        param5 = json['gender']
+        param6 = json['email']
+        param7 = json['phone']
 
         if param1:
             result = dao.getUserByUsername(param1)
@@ -80,61 +79,60 @@ class userHandler:
 
         return jsonify(User=mapped_result)
 
-    def createUser(self, args):
-        param0 = args.get('user_id')
-        param1 = args.get('username')
-        param2 = args.get('password')
-        param3 = args.get('first_name')
-        param4 = args.get('last_name')
-        param5 = args.get('gender')
-        param6 = args.get('email')
-        param7 = args.get('phone')
+    def createUser(self, json):
+        dao = UserDAO()
+        param1 = json['username']
+        param2 = json['password']
+        param3 = json['first_name']
+        param4 = json['last_name']
+        param5 = json['gender']
+        param6 = json['email']
+        param7 = json['phone']
 
-        if param0 and param1 and param2 and param3 and param4 and param5 and param6 and param7:
-            result = self.build_user_attributes(param0, param1, param2, param3, param4, param5, param6, param7)
+        if param1 and param2 and param3 and param4 and param5 and param6 and param7:
+            user_id = dao.insertUser(param1, param2, param3, param4, param5, param6, param7)
+            result = self.build_user_attributes(user_id, param1, param2, param3, param4, param5, param6, param7)
             return jsonify(CreateStatus=result), 201
         else:
             return jsonify(Error="Unexpected attributes in post request"), 400
 
-    def updateUser(self, user_id, args):
+    # def updateUser(self, user_id, json):
+    #     dao = UserDAO()
+    #     if dao.getUserByID(user_id):
+    #         param0 = json['user_id']
+    #         param1 = json['username']
+    #         param2 = json['password']
+    #         param3 = json['first_name']
+    #         param4 = json['last_name']
+    #         param5 = json['gender']
+    #         param6 = json['email']
+    #         param7 = json['phone']
+    #         if param0 != user_id:
+    #             return jsonify(Error="User_id does not match"), 400
+    #         elif param0 and param1 and param2 and param3 and param4 and param5 and param6 and param7:
+    #             result = self.build_user_attributes(param0, param1, param2, param3, param4, param5, param6, param7)
+    #             return jsonify(UpdateStatus=result), 201
+    #         else:
+    #             return jsonify(Error="Unexpected attributes in post request"), 400
+    #         return jsonify(UpdateStatus="OK"), 200
+    #     else:
+    #         return jsonify(Error="User not found."), 404
+
+
+    # def deleteUser(self, user_id):
+    #     dao = UserDAO()
+    #     if not dao.getUserByID(user_id):
+    #         return jsonify(Error="User not found."), 404
+    #     else:
+    #         result = dao.deleteUser(user_id)
+    #     return jsonify(DeleteStatus=result), 200
+
+    def getUserByUsernameAndPassword(self, json):
         dao = UserDAO()
-        if dao.getUserByID(user_id):
-            param0 = args.get('user_id')
-            param1 = args.get('username')
-            param2 = args.get('password')
-            param3 = args.get('first_name')
-            param4 = args.get('last_name')
-            param5 = args.get('gender')
-            param6 = args.get('email')
-            param7 = args.get('phone')
-
-            if param0 != user_id:
-                return jsonify(Error="User_id does not match"), 400
-            elif param0 and param1 and param2 and param3 and param4 and param5 and param6 and param7:
-                result = self.build_user_attributes(param0, param1, param2, param3, param4, param5, param6, param7)
-                return jsonify(UpdateStatus=result), 201
-            else:
-                return jsonify(Error="Unexpected attributes in post request"), 400
-            return jsonify(UpdateStatus="OK"), 200
-        else:
-            return jsonify(Error="User not found."), 404
-
-
-    def deleteUser(self, user_id):
-        dao = UserDAO()
-        if not dao.getUserByID(user_id):
-            return jsonify(Error="User not found."), 404
-        else:
-            result = dao.getUserByID(user_id)
-
-        return jsonify(DeleteStatus=result), 200
-
-    def getUserByUsernameAndPassword(self, args):
-        dao = UserDAO()
-        username = args.get('username')
-        password = args.get('password')
+        username = json['username']
+        password = json['password']
         result = dao.getUserByUsernameAndPassword(username, password)
         if not result:
-            return jsonify(Error="Incorrect username or password. Please try again"), 400
+            return jsonify(Unauthorized="Incorrect username or password. Please try again"), 401
         else:
-            return jsonify(Succesful = self.build_user_dict(result)), 200
+            return jsonify(Succesful=self.build_user_dict(result)), 200

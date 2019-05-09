@@ -32,6 +32,16 @@ class postHandler:
         p = {}
         p['day'] = row[0]
         p['total'] = row[1]
+        p['post_id'] = row[0]
+        p['post_content'] = row[1]
+        p['user_id'] = row[2]
+
+        return p
+
+    def build_react_dict(self, row):
+        p={}
+        p['post_id'] = row[0]
+        p['username'] = row[1]
 
         return p
 
@@ -246,3 +256,4 @@ class postHandler:
             mappped_result.append(self.build_react_dict(row))
 
         return jsonify(Dislikes=mappped_result)
+
