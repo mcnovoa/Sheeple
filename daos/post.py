@@ -1,24 +1,88 @@
 import psycopg2
 from sheepledb.dbconfig import pg_config
 class PostDAO:
+
     def __init__(self):
         connection_url = "dbname=%s user=%s password=%s" % (pg_config['dbname'],
         pg_config['user'], pg_config['passwd'])
         self.conn = psycopg2._connect(connection_url)
+
+    def insertPost(self, post_content, post_date, image_url, user_id, gc_id):
+        cursor = self.conn.cursor()
+        fq = "select * from groupchat natural inner join users natural inner join belongsto where gc_id = %s and user_id = %s;"
+        cursor.execute(fq, (gc_id, user_id,))
+        bool = cursor.fetchone()
+        if bool is not None:
+            query = "insert into Post(post_content, post_date, image_url, user_id, gc_id) values (%s, %s, %s, %s, %s) returning post_id;"
+            cursor.execute(query, (post_content, post_date, image_url, user_id, gc_id,))
+            post_id = cursor.fetchone()[0]
+            self.conn.commit()
+            return post_id
+        else:
+            return None
+
+    def insertReply(self, post_content, post_date, image_url, user_id, gc_id, original_post):
+        cursor = self.conn.cursor()
+        fq = "select * from groupchat natural inner join users natural inner join belongsto where gc_id = %s and user_id = %s;"
+        cursor.execute(fq, (gc_id, user_id,))
+        bool = cursor.fetchone()
+        if bool is not None:
+            query = "insert into Post(post_content, post_date, image_url, user_id, gc_id) values (%s, %s, %s, %s, %s) returning post_id;"
+            cursor.execute(query, (post_content, post_date, image_url, user_id, gc_id,))
+            post_id = cursor.fetchone()[0]
+            rq = 'insert into isReply(original, reply) values (%s, %s);'
+            cursor.execute(rq, (original_post, post_id,))
+            self.conn.commit()
+            return post_id
+        else:
+            return None
+
+
+    def reactPost(self, reaction_type, post_id, user_id, gc_id):
+        cursor = self.conn.cursor()
+        fq = "select * from groupchat natural inner join users natural inner join belongsto where gc_id = %s and user_id = %s;"
+        cursor.execute(fq, (gc_id, user_id,))
+        bool = cursor.fetchone()
+        ff = "select * from post where post_id = %s and gc_id = %s;"
+        cursor.execute(ff, (post_id, gc_id,))
+        boolf = cursor.fetchone()
+
+        if bool is not None and boolf is not None:
+            rq = "select reaction_type from reacts where post_id = %s and (reaction_type = 'like' or reaction_type = 'dislike') and user_id = %s;"
+            cursor.execute(rq, (post_id, user_id,))
+            p = cursor.fetchone()
+            if p is None:
+                query = "insert into Reacts(reaction_type, post_id, user_id) values (%s, %s, %s);"
+                cursor.execute(query, (reaction_type, post_id, user_id,))
+                self.conn.commit()
+                return 1
+            else:
+                if(reaction_type == 'like' and p == 'like') or (reaction_type == 'dislike' and p == 'dislike'):
+                    return -1
+                else:
+                    lastq = 'Update reacts set reaction_type = %s where user_id = %s and post_id = %s;'
+                    cursor.execute(lastq, (reaction_type, user_id, post_id,))
+                    self.conn.commit()
+                    return 1
+        else:
+            return None
+
     def getAllPosts(self):
         c = self.conn.cursor()
-        query = "Select P.post_id, post_content, post_date, image_url, user_id, gc_id, original from (Post as P full outer join isReply as R on P.post_id = R.reply) full outer join Images as I on P.post_id = I.post_id order by post_id;"
+        query = "Select P.post_id, post_content, post_date, image_url, user_id, gc_id, original from (Post as P full outer join isReply as R on P.post_id = R.reply) order by post_id;"
         c.execute(query)
         result = []
         for row in c:
             result.append(row)
         return result
+
     def getPostById(self, post_id):
         c = self.conn.cursor()
-        query = "Select P.post_id, post_content, post_date, image_url, user_id, gc_id, original from (Post as P full outer join isReply as R on P.post_id = R.reply) full outer join Images as I on P.post_id = I.post_id where P.post_id = %s order by post_id;"
+        query = "Select P.post_id, post_content, post_date, image_url, user_id, gc_id, original from (Post as P full outer join isReply as R on P.post_id = R.reply)  where P.post_id = %s order by post_id;"
         c.execute(query, (post_id,))
         result = c.fetchone()
         return result
+
     def getNumOfReactions(self, post_id, reaction_type):
         c = self.conn.cursor()
         query = "select count(*) from Reacts where post_id = %s and reaction_type = %s;"
@@ -28,15 +92,24 @@ class PostDAO:
 
     def getPostsByGC(self, gc_id):
         c = self.conn.cursor()
-        query = "Select P.post_id, post_content, post_date, image_url, user_id, gc_id, original from (Post as P full outer join isReply as R on P.post_id = R.reply) full outer join Images as I on P.post_id = I.post_id where P.gc_id = %s order by post_id;"
+        query = "Select P.post_id, post_content, post_date, image_url, user_id, gc_id, original from (Post as P full outer join isReply as R on P.post_id = R.reply) where P.gc_id = %s order by post_id;"
         c.execute(query, (gc_id,))
         result = []
         for row in c:
             result.append(row)
         return result
-    def getPostsByDay(self):
+    def getPostsPerDay(self):
         c = self.conn.cursor()
         query = "Select P.post_date, count(*) from Post as P group by P.post_date;"
+        c.execute(query)
+        result = []
+        for row in c:
+            result.append(row)
+        return result
+
+    def getRepliesPerDay(self):
+        c = self.conn.cursor()
+        query = "Select P.post_date, count(*) from Post as P natural inner join isReply where orginal = P.post_id group by P.post_date;"
         c.execute(query)
         result = []
         for row in c:
