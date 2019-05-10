@@ -146,7 +146,7 @@ class PostDAO:
 
     def mostActiveUsersPerDay(self):
         c = self.conn.cursor()
-        query = "Select post_date, max(username) as Most_Active from (Select count(*) from Users inner join Post on post.user_id = users.user_id) as foo natural inner join Users natural inner join Post group by post_date order by post_date;"
+        query = "Select number_of_post.post_date, max(number_of_post.c) from (Select users.user_id, count(*) as c, post_date from Users inner join Post on post.user_id = users.user_id group by users.user_id, post_date) as number_of_post inner join Users on number_of_post.user_id = users.user_id group by post_date order by post_date;"
         c.execute(query)
         result = []
         for row in c:

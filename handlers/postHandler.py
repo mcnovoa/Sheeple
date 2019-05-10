@@ -76,6 +76,7 @@ class postHandler:
         original_post = json['original_post']
         result = self.build_post_attributes(post_id, post_content, post_date, image_url, user_id, gc_id, original_post)
         return jsonify(UpdatePost=result), 201
+
     def deletePost(self, post_id):
         dao = PostDAO()
         p = dao.getPostById(post_id)
