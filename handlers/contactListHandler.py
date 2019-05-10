@@ -109,10 +109,17 @@ class contactListHandler:
         dao = contactListDAO()
         param3 = json['first_name']
         param4 = json['last_name']
-        param6 = json['email']
-        param7 = json['phone']
-        if param3 and param4 and (param6 or param7) and owner_id:
-            result = dao.insertUserIntoContactList(param3, param4, param6, param7, owner_id)
+        param6 = None
+        param7 = None
+        if 'email' in json:
+            param6 = json['email']
+        if 'phone' in json:
+            param7 = json['phone']
+        if param3 and param4 and param6 and owner_id:
+            result = dao.insertUserIntoContactListEmail(param3, param4, param6, owner_id)
+            return jsonify(AddedContact=result)
+        elif param3 and param4 and param7 and owner_id:
+            result = dao.insertUserIntoContactListPhone(param3, param4, param7, owner_id)
             return jsonify(AddedContact=result)
         else:
             return jsonify(Error="Invalid parameters. Please try again"), 404
