@@ -1,5 +1,4 @@
-from flask import jsonify
-
+from flask import Flask, jsonify, request
 from daos.groupChat import groupChatDAO
 
 
@@ -74,7 +73,7 @@ class groupChatHandler:
 
         return jsonify(Conversation=groupchatmap)
 
-    def updateGroupChat(self, groupchat_id, form):
+    def updateGroupChat(self, gc_id, form):
         return jsonify(UpdateGroupChat="OK"), 200
 
     def deleteGroupChat(self, gc_id, admin_id):
@@ -107,8 +106,9 @@ class groupChatHandler:
             ids = dao.deleteGroupChat(gc_id)
             return jsonify(DeleteGroupChat=ids), 200
 
-    def postGroupChat(self, gc_name, admin_id):
-
+    def postGroupChat(self, json):
+        gc_name = json['gc_name']
+        admin_id = json['admin_id']
         dao = groupChatDAO()
         gc_id = dao.postGroupChat(gc_name, admin_id)
         dao.addUserToGroupChat(gc_id, admin_id)

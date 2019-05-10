@@ -7,7 +7,6 @@ pg_config = {
 #     'user' : 'jonathan',
 #     'passwd' : 'jonathan',
 #     'dbname'  : 'sheeple'
-
    'user' : 'luisrivera',
    'passwd' : 'minix',
    'dbname'  : 'sheeple'

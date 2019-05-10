@@ -4,7 +4,6 @@ from flask_cors import CORS
 from handlers.contactListHandler import contactListHandler
 from handlers.groupChatHandler import groupChatHandler
 from handlers.hashtagHandler import hashtagHandler
-from handlers.imageHandler import imageHandler
 from handlers.postHandler import postHandler
 from handlers.userHandler import userHandler
 
@@ -32,15 +31,9 @@ def login():
         return userHandler().getUserByUsernameAndPassword(request.json)
 
 # ------------------------Dashboard ----------------------------#
-@app.route('/Sheeple/dashboard/posts', methods= ['GET'])
-def getPostsByDay():
-    handler = postHandler()
-    if request.method == 'GET':
-        return handler.getPostsByDay()
-    else:
-        return jsonify(Error="Method not allowed."), 405
 
-@app.route('/Sheeple/dashboard/hashtags', methods=['GET'])
+
+@app.route('/Sheeple/dashboard/hashtags', methods= ['GET'])
 def popularHashtags():
     handler = hashtagHandler()
     if request.method == 'GET':
@@ -49,14 +42,78 @@ def popularHashtags():
         return jsonify(Error="Method not allowed")
 
 
-# @app.route('/Sheeple/posts/<int:post_id>/reply/<int:original>', methods=['POST'])
-# def replyPost(post_id, original):
-#     handler = postHandler()
-#     if request.method == 'POST':
-#         return handler.replyPost(post_id, original, request.args)
-#     else:
-#         return jsonify(Error="Method not allowed."), 405
-#
+@app.route('/Sheeple/dashboard/posts', methods= ['GET'])
+def getPostsPerDay():
+    handler = postHandler()
+    if request.method == 'GET':
+        return handler.getPostsPerDay()
+    else:
+        return jsonify(Error="Method not allowed."), 405
+
+
+@app.route('/Sheeple/dashboard/replies', methods= ['GET'])
+def getRepliesPerDay():
+    handler = postHandler()
+    if request.method == 'GET':
+        return handler.getRepliesPerDay()
+    else:
+        return jsonify(Error="Method not allowed."), 405
+
+
+@app.route('/Sheeple/dashboard/<string:reaction_type>', methods= ['GET'])
+def getLikesPerDay(reaction_type):
+    handler = postHandler()
+    if request.method == 'GET':
+        return handler.getReactionsPerDay(reaction_type)
+    else:
+        return jsonify(Error="Method not allowed."), 405
+
+
+@app.route('/Sheeple/dashboard/users', methods=['GET'])
+def mostActiveUsersPerDay():
+    handler = postHandler()
+    if request.method == 'GET':
+        return handler.mostActiveUsersPerDay()
+    else:
+        return jsonify(Error="Method not allowed."), 405
+
+
+@app.route('/Sheeple/dashboard/posts/<int:user_id>', methods= ['GET'])
+def getnumPostsByUserPerDay(user_id):
+    handler = postHandler()
+    if request.method == 'GET':
+        return handler.getnumPostsByUserPerDay(user_id)
+    else:
+        return jsonify(Error="Method not allowed."), 405
+
+
+@app.route('/Sheeple/dashboard/replies/<int:post_id>', methods= ['GET'])
+def getnumRepliesOfPost():
+    handler = postHandler()
+    if request.method == 'GET':
+        return handler.getnumRepliesOfPost()
+    else:
+        return jsonify(Error="Method not allowed."), 405
+
+
+@app.route('/Sheeple/dashboard/likes/<int:post_id>', methods= ['GET'])
+def getnumLikesOfPost():
+    handler = postHandler()
+    if request.method == 'GET':
+        return handler.getnumLikesOfPost()
+    else:
+        return jsonify(Error="Method not allowed."), 405
+
+
+@app.route('/Sheeple/dashboard/dislikes/<int:post_id>', methods= ['GET'])
+def getnumDislikesOfPost():
+    handler = postHandler()
+    if request.method == 'GET':
+        return handler.getnumDislikesOfPost()
+    else:
+        return jsonify(Error="Method not allowed."), 405
+
+
 # # ------------------- ----Second Phase-------------------------#
 #
 @app.route('/Sheeple/posts', methods=['GET'])
@@ -65,16 +122,6 @@ def getAllPosts():
 
     if request.method == 'GET':
         return handler.getAllPosts()
-    else:
-        return jsonify(Error="Method not allowed."), 405
-
-
-
-@app.route('/Sheeple/posts/reactions/<string:reaction_type>/<int:post_id>', methods=['GET'])
-def getNumOfReactions(post_id, reaction_type):
-    handler = postHandler()
-    if request.method == 'GET':
-        return handler.getNumOfReactions(post_id, reaction_type)
     else:
         return jsonify(Error="Method not allowed."), 405
 
@@ -246,37 +293,7 @@ def getHashtagById(id):
     return handler.getHashtagById(id)
 
 #------------------------End Hashtag----------------------------------#
-
-
-# ---------------------------Start Images-----------------------------#
-@app.route('/Sheeple/images', methods=['GET'])
-def getAllImages():
-    handler = imageHandler()
-    if request.args:
-        return handler.searchImagesByArgs(request.args)
-    else:
-        return handler.getAllImages()
-
-
-@app.route('/Sheeple/images/<int:image_id>', methods=['GET', 'POST', 'PUT', 'DELETE'])
-def doByImageId(image_id):
-    handler = imageHandler()
-    if request.method == 'GET':
-        return handler.getImageById(image_id)
-    elif request.method == 'POST':
-        return handler.createImage(image_id, request.args)
-    elif request.method == 'PUT':
-        return handler.updateImage(image_id, request.args)
-    elif request.method == 'DELETE':
-        return handler.deleteImage(image_id)
-    else:
-        return jsonify(Error="Method not allowed."), 405
-
-
-# ---------------------------End Images-----------------------------#
-
-# ---------------------------Start Post-------------------------------#
-
+#------------------------Start Post----------------------------------#
 
 @app.route('/Sheeple/posts/<int:post_id>', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def doByPostId(post_id):
@@ -284,24 +301,20 @@ def doByPostId(post_id):
     if request.method == 'GET':
         return handler.getPostById(post_id)
     elif request.method == 'POST':
-        return handler.createPost(post_id, request.args)
+        return handler.createPost(request.json)
     elif request.method == 'PUT':
         return handler.updatePost(post_id, request.args)
     elif request.method == 'DELETE':
         return handler.deletePost(post_id)
     else:
         return jsonify(Error="Method not allowed."), 405
-
 @app.route('/Sheeple/posts/<int:post_id>/likes', methods=['GET'])
 def getUsersWhoLikesPost(post_id):
     handler = postHandler()
-
     if request.method == 'GET':
         return handler.getUserWhoLikesPost(post_id)
-
     else:
         return jsonify(Error="Method not allowed"), 405
-
 # See the photos, the original message that came with the photo, and any replies
 @app.route('/Sheeple/posts-and-replies', methods=['GET'])
 def doGetPostsReplies():
@@ -310,36 +323,32 @@ def doGetPostsReplies():
        return handler.getPostsReplies()
     else:
         return jsonify(Error="Method not allowed."), 405
-
 @app.route('/Sheeple/posts/<int:post_id>/dislikes', methods=['GET'])
 def getUsersWhoDisikesPost(post_id):
     handler = postHandler()
-
     if request.method == 'GET':
         return handler.getUserWhoDislikesPost(post_id)
-
     else:
         return jsonify(Error="Method not allowed"), 405
-
 # Like or dislike a photo posted on a chat group:
-@app.route('/Sheeple/posts/<int:post_id>/<string:reaction_type>/<int:user_id>', methods=['POST'])
-def reactPost(post_id, reaction_type, user_id):
+@app.route('/Sheeple/posts/<string:reaction_type>', methods=['POST'])
+def reactPost(reaction_type):
     handler = postHandler()
     if request.method == 'POST':
-        return handler.reactPost(post_id, reaction_type, user_id)
+        return handler.reactPost(reaction_type, request.json)
     else:
         return jsonify(Error="Method not allowed."), 405
 
+
 # Reply to the original photo message posted on a chat group
-@app.route('/Sheeple/posts/<int:post_id>/reply/<int:original>', methods= ['POST'])
-def replyPost(post_id, original):
+@app.route('/Sheeple/posts/reply', methods= ['POST'])
+def replyPost():
     handler = postHandler()
     if request.method == 'POST':
-        return handler.replyPost(post_id, original, request.args)
+        return handler.replyPost(request.json)
     else:
         return jsonify(Error="Method not allowed."), 405
 # -----------------------------End Post-------------------------------#
-
 
 # ---------------------------Start Users----------------------------#
 @app.route('/Sheeple/users', methods=['GET', 'POST'])
