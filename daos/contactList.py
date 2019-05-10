@@ -62,10 +62,30 @@ class contactListDAO:
             result.append(r)
         return result
 
-    def insertUserIntoContactList(self, first_name, last_name, email, phone, owner_id):
+    def insertUserIntoContactListEmail(self, first_name, last_name, email, owner_id):
         cursor = self.conn.cursor()
-        query = "select user_id from users where first_name=%s and last_name=%s and (email=%s or phone=%s);"
-        cursor.execute(query, (first_name, last_name, email, phone,))
+        query = "select user_id from users where first_name=%s and last_name=%s and email=%s;"
+        cursor.execute(query, (first_name, last_name, email,))
+        user_id = cursor.fetchone()
+        query = "select cl_id from ContactList where owner_id = %s;"
+        cursor.execute(query, (owner_id,))
+        cl_id = cursor.fetchone()
+        query = "select user_id from IsPart where cl_id = %s AND user_id = %s;"
+        cursor.execute(query, (cl_id, user_id,))
+        copy_id = cursor.fetchone()
+        if not copy_id:
+            query = "insert into IsPart (cl_id, user_id) values(%s, %s) returning *;"
+            cursor.execute(query, (cl_id, user_id,))
+            result = cursor.fetchone()
+            self.conn.commit()
+            return [result, cl_id, user_id]
+        else:
+            return ['User already in contact list', cl_id, user_id]
+
+    def insertUserIntoContactListPhone(self, first_name, last_name, phone, owner_id):
+        cursor = self.conn.cursor()
+        query = "select user_id from users where first_name=%s and last_name=%s and phone=%s;"
+        cursor.execute(query, (first_name, last_name, phone,))
         user_id = cursor.fetchone()
         query = "select cl_id from ContactList where owner_id = %s;"
         cursor.execute(query, (owner_id,))
