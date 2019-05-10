@@ -92,7 +92,7 @@ class userHandler:
         if param1 and param2 and param3 and param4 and param5 and param6 and param7:
             user_id = dao.insertUser(param1, param2, param3, param4, param5, param6, param7)
             result = self.build_user_attributes(user_id, param1, param2, param3, param4, param5, param6, param7)
-            return jsonify(CreateStatus=result), 201
+            return jsonify(User=result)
         else:
             return jsonify(Error="Unexpected attributes in post request"), 400
 
@@ -135,4 +135,4 @@ class userHandler:
         if not result:
             return jsonify(Unauthorized="Incorrect username or password. Please try again"), 401
         else:
-            return jsonify(Succesful=self.build_user_dict(result)), 200
+            return jsonify(User=self.build_user_dict(result)), 200

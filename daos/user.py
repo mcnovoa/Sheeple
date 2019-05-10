@@ -25,7 +25,6 @@ class UserDAO:
         query = "Select * from Users as U where U.user_id = %s order by U.user_id;"
         cursor.execute(query, (id,))
         result = cursor.fetchone()
-
         return result
 
     def getUserByUsername(self, username):
