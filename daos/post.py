@@ -1,5 +1,7 @@
 import psycopg2
 from sheepledb.dbconfig import pg_config
+
+
 class PostDAO:
 
     def __init__(self):
@@ -37,7 +39,6 @@ class PostDAO:
         else:
             return None
 
-
     def reactPost(self, reaction_type, post_id, user_id, gc_id):
         cursor = self.conn.cursor()
         fq = "select * from groupchat natural inner join users natural inner join belongsto where gc_id = %s and user_id = %s;"
@@ -46,7 +47,6 @@ class PostDAO:
         ff = "select * from post where post_id = %s and gc_id = %s;"
         cursor.execute(ff, (post_id, gc_id,))
         boolf = cursor.fetchone()
-
         if bool is not None and boolf is not None:
             rq = "select reaction_type from reacts where post_id = %s and (reaction_type = 'like' or reaction_type = 'dislike') and user_id = %s;"
             cursor.execute(rq, (post_id, user_id,))
@@ -98,9 +98,10 @@ class PostDAO:
         for row in c:
             result.append(row)
         return result
+
     def getPostsPerDay(self):
         c = self.conn.cursor()
-        query = "Select P.post_date, count(*) from Post as P group by P.post_date;"
+        query = "Select P.post_date, count(*) from Post as P group by P.post_date order by post_date;"
         c.execute(query)
         result = []
         for row in c:
@@ -109,7 +110,7 @@ class PostDAO:
 
     def getRepliesPerDay(self):
         c = self.conn.cursor()
-        query = "Select P.post_date, count(*) from Post as P natural inner join isReply where orginal = P.post_id group by P.post_date;"
+        query = "Select P.post_date, count(*) from Post as P natural inner join isReply where reply = P.post_id group by P.post_date order by post_date;"
         c.execute(query)
         result = []
         for row in c:
@@ -123,7 +124,31 @@ class PostDAO:
         result = []
         for row in c:
             result.append(row)
-
         return result
 
+    def getUserWhoDislikesPost(self, post_id):
+        c = self.conn.cursor()
+        query = "select post_id, username from users natural inner join reacts where post_id = %s and reaction_type = 'dislike';"
+        c.execute(query, (post_id,))
+        result = []
+        for row in c:
+            result.append(row)
+        return result
 
+    def getReactionsPerDay(self, reaction_type):
+        c = self.conn.cursor()
+        query = "Select post_date, count(*) from Reacts inner join Post on post.post_id = reacts.post_id where reaction_type = %s group by post_date order by post_date;"
+        c.execute(query, (reaction_type,))
+        result = []
+        for row in c:
+            result.append(row)
+        return result
+
+    def mostActiveUsersPerDay(self):
+        c = self.conn.cursor()
+        query = "Select post_date, max(username) as Most_Active from (Select count(*) from Users inner join Post on post.user_id = users.user_id) as foo natural inner join Users natural inner join Post group by post_date order by post_date;"
+        c.execute(query)
+        result = []
+        for row in c:
+            result.append(row)
+        return result
