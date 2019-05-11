@@ -34,9 +34,10 @@ class groupChatHandler:
 
         return groupchat
 
-    def build_one_dict(self, row):
+    def build_two_dict(self, row):
         groupchat = {}
         groupchat['gc_name'] = row[0]
+        groupchat['gc_id'] = row[1]
 
         return groupchat
 
@@ -157,7 +158,7 @@ class groupChatHandler:
 
         mapped_result = []
         for row in result:
-            mapped_result.append(self.build_one_dict(row))
+            mapped_result.append(self.build_two_dict(row))
         return jsonify(GroupChats=mapped_result), 200
 
     def getGroupChatByOwner(self, gc_id):

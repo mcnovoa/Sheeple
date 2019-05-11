@@ -129,7 +129,7 @@ class groupChatDAO:
 
     def getGroupChatsForUser(self, user_id):
         cursor = self.conn.cursor()
-        query = "select gc_name from users natural inner join belongsto natural inner join groupchat where user_id = %s;"
+        query = "select gc_name , gc_id from users natural inner join belongsto natural inner join groupchat where user_id = %s;"
         cursor.execute(query, (user_id, ))
         result = []
         for row in cursor:

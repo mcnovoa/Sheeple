@@ -158,7 +158,8 @@ def getAllContactLists():
             return handler.getAllContactLists()
     else:
         return jsonify(Error="Method not allowed."), 405
-#
+
+
 @app.route('/Sheeple/contactlists/<int:cl_id>', methods=['GET'])
 def doContactListById(cl_id):
     handler = contactListHandler()
@@ -166,6 +167,7 @@ def doContactListById(cl_id):
         return handler.getContactListByID(cl_id)
     else:
         return jsonify(Error="Method not allowed."), 405
+
 
 # Add or Delete Contact from contact list of user X
 @app.route('/Sheeple/contactlists/<int:owner_id>/user', methods=['DELETE', 'POST'])
@@ -247,6 +249,7 @@ def addOrDeleteUserFromGroupchat(gc_id, user_id):
     else:
         jsonify(Error = "Method not allowed"), 405
 
+
 @app.route('/Sheeple/groupchats/user/<int:user_id>', methods=['GET'])
 def getGroupchatsForUser(user_id):
     handler = groupChatHandler()
@@ -256,10 +259,9 @@ def getGroupchatsForUser(user_id):
         return jsonify(Error="Method not allowed"), 405
 
 
-
 # -------------------------End Groupchats--------------------------#
 
-#------------------------Start Hashtag--------------------------------#
+# ------------------------Start Hashtag--------------------------------#
 
 @app.route('/Sheeple/hashtags', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def getAllHashtags():
@@ -278,28 +280,38 @@ def getAllHashtags():
         return handler.deleteHashtag()
 
 
-
 @app.route('/Sheeple/hashtags/<int:id>', methods=['GET'])
 def getHashtagById(id):
     handler = hashtagHandler()
     return handler.getHashtagById(id)
 
-#------------------------End Hashtag----------------------------------#
-#------------------------Start Post----------------------------------#
+# ------------------------End Hashtag----------------------------------#
 
-@app.route('/Sheeple/posts/<int:post_id>', methods=['GET', 'POST', 'PUT', 'DELETE'])
+
+# ------------------------Start Post----------------------------------#
+
+@app.route('/Sheeple/post', methods=['POST'])
+def addPost():
+    handler = postHandler()
+    if request.method == 'POST':
+        return handler.createPost(request.get_json())
+    else:
+        return jsonify(Error="Method not allowed."), 405
+
+
+@app.route('/Sheeple/posts/<int:post_id>', methods=['GET', 'PUT', 'DELETE'])
 def doByPostId(post_id):
     handler = postHandler()
     if request.method == 'GET':
         return handler.getPostById(post_id)
-    elif request.method == 'POST':
-        return handler.createPost(request.json)
     elif request.method == 'PUT':
         return handler.updatePost(post_id, request.args)
     elif request.method == 'DELETE':
         return handler.deletePost(post_id)
     else:
         return jsonify(Error="Method not allowed."), 405
+
+
 @app.route('/Sheeple/posts/<int:post_id>/likes', methods=['GET'])
 def getUsersWhoLikesPost(post_id):
     handler = postHandler()
@@ -307,6 +319,7 @@ def getUsersWhoLikesPost(post_id):
         return handler.getUserWhoLikesPost(post_id)
     else:
         return jsonify(Error="Method not allowed"), 405
+
 # See the photos, the original message that came with the photo, and any replies
 @app.route('/Sheeple/posts-and-replies', methods=['GET'])
 def doGetPostsReplies():
@@ -315,6 +328,8 @@ def doGetPostsReplies():
        return handler.getPostsReplies()
     else:
         return jsonify(Error="Method not allowed."), 405
+
+
 @app.route('/Sheeple/posts/<int:post_id>/dislikes', methods=['GET'])
 def getUsersWhoDisikesPost(post_id):
     handler = postHandler()
@@ -322,6 +337,8 @@ def getUsersWhoDisikesPost(post_id):
         return handler.getUserWhoDislikesPost(post_id)
     else:
         return jsonify(Error="Method not allowed"), 405
+
+
 # Like or dislike a photo posted on a chat group:
 @app.route('/Sheeple/posts/<string:reaction_type>', methods=['POST'])
 def reactPost(reaction_type):
@@ -340,6 +357,7 @@ def replyPost():
         return handler.replyPost(request.json)
     else:
         return jsonify(Error="Method not allowed."), 405
+
 # -----------------------------End Post-------------------------------#
 
 # ---------------------------Start Users----------------------------#
@@ -355,7 +373,6 @@ def getAllUsers():
         return handler.createUser(request.json)
 
 
-
 @app.route('/Sheeple/users/<int:user_id>', methods=['GET', 'PUT', "DELETE"])
 def doUsersById(user_id):
     handler = userHandler()
@@ -367,7 +384,6 @@ def doUsersById(user_id):
         return handler.deleteUser(user_id)
 
 # -----------------------------End Users-------------------------------#
-
 
 
 if __name__ == '__main__':
