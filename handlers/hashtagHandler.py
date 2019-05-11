@@ -16,12 +16,6 @@ class hashtagHandler:
 
             return hashtag
 
-    def build_dashboard_dict(self, row):
-        hashtag = {}
-        hashtag['Hashtag'] = row[0]
-        hashtag['Total'] = row[1]
-
-        return hashtag
 
     def getAllHashtags(self):
         dao = hashtagDAO()

@@ -27,6 +27,7 @@ class postHandler:
         p['day'] = row[0]
         p['total'] = row[1]
         return p
+
     def build_post_attributes(self, post_id, post_content, post_date, image_url, user_id, gc_id, original_post):
         p = {}
         p['post_id'] = post_id
@@ -47,11 +48,13 @@ class postHandler:
         p['gc_id'] = gc_id
         p['original_post'] = original_post
         return p
+
     def build_nr_attributes(self, post_id, number_of_reactions):
         nr = {}
         nr['post_id'] = post_id
-        nr['numer_of_reactions'] = number_of_reactions
+        nr['total'] = number_of_reactions
         return nr
+
     def getAllPosts(self):
         dao = PostDAO()
         apst = dao.getAllPosts()
@@ -59,6 +62,7 @@ class postHandler:
         for a in apst:
             apsts.append(self.build_post_dict(a))
         return jsonify(Posts=apsts)
+
     def getPostById(self, post_id):
         dao = PostDAO()
         p = dao.getPostById(post_id)
@@ -67,6 +71,7 @@ class postHandler:
         else:
             pmap = self.build_post_dict(p)
         return jsonify(Posts=pmap), 200
+
     def updatePost(self, post_id, json):
         post_content = json['post_content']  # message, photo || both
         gc_id = json['gc_id']
@@ -84,6 +89,7 @@ class postHandler:
             return jsonify(Error="NOT FOUND"), 404
         result = self.build_post_dict(p)
         return jsonify(DeletePost=result), 200
+
     def createPost(self, json):
         daop = PostDAO()
         daoh = hashtagDAO()
@@ -105,6 +111,7 @@ class postHandler:
             return jsonify(CreatePost=result), 201
         else:
             return jsonify(Error="User is not subscribed in this groupchat.")
+
     def replyPost(self, json):
         daop = PostDAO()
         daoh = hashtagDAO()
@@ -127,19 +134,7 @@ class postHandler:
             return jsonify(ReplyPost=result), 201
         else:
             return jsonify(Error="User is not subscribed in this groupchat.")
-    def getNumOfReactions(self, post_id, reaction_type):
-        dao = PostDAO()
-        p = dao.getPostById(post_id)
-        if p == None:
-            return jsonify(Error="NOT FOUND"), 404
-        cr = dao.getNumOfReactions(post_id, reaction_type)
-        nr = self.build_nr_attributes(post_id, cr)
-        if reaction_type == 'like':
-            return jsonify(NumberOfLikes=nr), 200
-        elif reaction_type == 'dislike':
-            return jsonify(NumberOfDislikes=nr), 200
-        else:
-            return jsonify(Error="Reaction Not Allowed"), 404
+
     def getPostsByGC(self, gc_id):
         dao = PostDAO()
         gcp = dao.getPostsByGC(gc_id)
@@ -147,6 +142,7 @@ class postHandler:
         for a in gcp:
             result.append(self.build_post_dict(a))
         return jsonify(Posts=result)
+
     def getPostsReplies(self):
         dao = PostDAO()
         ps = dao.getAllPosts()
@@ -177,43 +173,6 @@ class postHandler:
             return jsonify(Error="User already liked or disliked post.")
         else:
             return jsonify(Error="User is not subscribed in this groupchat or post does not belong to this group chat.")
-    def getPostsPerDay(self):
-        dao = PostDAO()
-        pts = dao.getPostsPerDay()
-        result = []
-        for a in pts:
-            result.append(self.build_ps_dict(a))
-        return jsonify(PostsPerDay=result)
-
-    def getRepliesPerDay(self):
-        dao = PostDAO()
-        pts = dao.getRepliesPerDay()
-        result = []
-        for a in pts:
-            result.append(self.build_ps_dict(a))
-        return jsonify(RepliesPerDay=result)
-
-    def getReactionsPerDay(self, reaction_type):
-        dao = PostDAO()
-        pts = dao.getReactionsPerDay(reaction_type)
-        result = []
-        for a in pts:
-            result.append(self.build_ps_dict(a))
-
-        if reaction_type == 'like':
-            return jsonify(LikesPerDay=result)
-        elif reaction_type == 'dislike':
-            return jsonify(DislikesPerDay=result)
-        else:
-            return jsonify("Reaction not allowed.")
-
-    def mostActiveUsersPerDay(self):
-        dao = PostDAO()
-        pts = dao.mostActiveUsersPerDay()
-        result = []
-        for a in pts:
-            result.append(self.build_ps_dict(a))
-        return jsonify(MostActiveUsersPerDay=result)
 
     def getUserWhoLikesPost(self, post_id):
         dao = PostDAO()
@@ -230,3 +189,73 @@ class postHandler:
         for row in result:
             mappped_result.append(self.build_react_dict(row))
         return jsonify(Dislikes=mappped_result)
+
+    # def getPostsPerDay(self):
+    #     dao = PostDAO()
+    #     pts = dao.getPostsPerDay()
+    #     result = []
+    #     for a in pts:
+    #         result.append(self.build_ps_dict(a))
+    #     return jsonify(PostsPerDay=result)
+    #
+    # def getRepliesPerDay(self):
+    #     dao = PostDAO()
+    #     pts = dao.getRepliesPerDay()
+    #     result = []
+    #     for a in pts:
+    #         result.append(self.build_ps_dict(a))
+    #     return jsonify(RepliesPerDay=result)
+    #
+    # def getReactionsPerDay(self, reaction_type):
+    #     dao = PostDAO()
+    #     pts = dao.getReactionsPerDay(reaction_type)
+    #     result = []
+    #     for a in pts:
+    #         result.append(self.build_ps_dict(a))
+    #
+    #     if reaction_type == 'like':
+    #         return jsonify(LikesPerDay=result)
+    #     elif reaction_type == 'dislike':
+    #         return jsonify(DislikesPerDay=result)
+    #     else:
+    #         return jsonify("Reaction not allowed.")
+    #
+    # def mostActiveUsersPerDay(self):
+    #     dao = PostDAO()
+    #     pts = dao.mostActiveUsersPerDay()
+    #     result = []
+    #     for a in pts:
+    #         result.append(self.build_ps_dict(a))
+    #     return jsonify(MostActiveUsersPerDay=result)
+    #
+    # def getnumPostsByUserPerDay(self, user_id):
+    #     dao = PostDAO()
+    #     pts = dao.getnumPostsByUserPerDay(user_id)
+    #     result = []
+    #     for a in pts:
+    #         result.append(self.build_ps_dict(a))
+    #     return jsonify(NumberOfPostsPerDayByXUser=result)
+    #
+    # def getnumRepliesOfPost(self, post_id):
+    #     dao = PostDAO()
+    #     pts = dao.getnumRepliesOfPost(post_id)
+    #     result = []
+    #     for a in pts:
+    #         result.append(self.build_fro_dict(a))
+    #     return jsonify(NumberOfRepliesOfPost=result)
+    #
+    # def getNumOfReactions(self, post_id, reaction_type):
+    #     dao = PostDAO()
+    #     p = dao.getPostById(post_id)
+    #     if p == None:
+    #         return jsonify(Error="NOT FOUND"), 404
+    #     cr = dao.getNumOfReactions(post_id, reaction_type)
+    #     result = []
+    #     for a in cr:
+    #         result.append(self.build_fro_dict(a))
+    #     if reaction_type == 'like':
+    #         return jsonify(NumberOfLikes=result), 200
+    #     elif reaction_type == 'dislike':
+    #         return jsonify(NumberOfDislikes=result), 200
+    #     else:
+    #         return jsonify(Error="Reaction Not Allowed"), 404

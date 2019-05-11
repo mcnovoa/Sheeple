@@ -6,7 +6,7 @@ from handlers.groupChatHandler import groupChatHandler
 from handlers.hashtagHandler import hashtagHandler
 from handlers.postHandler import postHandler
 from handlers.userHandler import userHandler
-
+from handlers.dashboardHandler import dashboardHandler
 app = Flask(__name__)
 
 CORS(app)
@@ -35,7 +35,7 @@ def login():
 
 @app.route('/Sheeple/dashboard/hashtags', methods= ['GET'])
 def popularHashtags():
-    handler = hashtagHandler()
+    handler = dashboardHandler()
     if request.method == 'GET':
         return handler.getPopularHashtags()
     else:
@@ -44,7 +44,7 @@ def popularHashtags():
 
 @app.route('/Sheeple/dashboard/posts', methods= ['GET'])
 def getPostsPerDay():
-    handler = postHandler()
+    handler = dashboardHandler()
     if request.method == 'GET':
         return handler.getPostsPerDay()
     else:
@@ -53,7 +53,7 @@ def getPostsPerDay():
 
 @app.route('/Sheeple/dashboard/replies', methods= ['GET'])
 def getRepliesPerDay():
-    handler = postHandler()
+    handler = dashboardHandler()
     if request.method == 'GET':
         return handler.getRepliesPerDay()
     else:
@@ -62,7 +62,7 @@ def getRepliesPerDay():
 
 @app.route('/Sheeple/dashboard/<string:reaction_type>', methods= ['GET'])
 def getLikesPerDay(reaction_type):
-    handler = postHandler()
+    handler = dashboardHandler()
     if request.method == 'GET':
         return handler.getReactionsPerDay(reaction_type)
     else:
@@ -71,7 +71,7 @@ def getLikesPerDay(reaction_type):
 
 @app.route('/Sheeple/dashboard/users', methods=['GET'])
 def mostActiveUsersPerDay():
-    handler = postHandler()
+    handler = dashboardHandler()
     if request.method == 'GET':
         return handler.mostActiveUsersPerDay()
     else:
@@ -80,7 +80,7 @@ def mostActiveUsersPerDay():
 
 @app.route('/Sheeple/dashboard/posts/<int:user_id>', methods= ['GET'])
 def getnumPostsByUserPerDay(user_id):
-    handler = postHandler()
+    handler = dashboardHandler()
     if request.method == 'GET':
         return handler.getnumPostsByUserPerDay(user_id)
     else:
@@ -88,30 +88,22 @@ def getnumPostsByUserPerDay(user_id):
 
 
 @app.route('/Sheeple/dashboard/replies/<int:post_id>', methods= ['GET'])
-def getnumRepliesOfPost():
-    handler = postHandler()
+def getnumRepliesOfPost(post_id):
+    handler = dashboardHandler()
     if request.method == 'GET':
-        return handler.getnumRepliesOfPost()
+        return handler.getnumRepliesOfPost(post_id)
     else:
         return jsonify(Error="Method not allowed."), 405
 
 
-@app.route('/Sheeple/dashboard/likes/<int:post_id>', methods= ['GET'])
-def getnumLikesOfPost():
-    handler = postHandler()
+@app.route('/Sheeple/dashboard/<string:reaction_type>/<int:post_id>', methods= ['GET'])
+def getNumOfReactions(post_id, reaction_type):
+    handler = dashboardHandler()
     if request.method == 'GET':
-        return handler.getnumLikesOfPost()
+        return handler.getNumOfReactions(post_id, reaction_type)
     else:
         return jsonify(Error="Method not allowed."), 405
 
-
-@app.route('/Sheeple/dashboard/dislikes/<int:post_id>', methods= ['GET'])
-def getnumDislikesOfPost():
-    handler = postHandler()
-    if request.method == 'GET':
-        return handler.getnumDislikesOfPost()
-    else:
-        return jsonify(Error="Method not allowed."), 405
 
 
 # # ------------------- ----Second Phase-------------------------#
