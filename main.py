@@ -177,12 +177,12 @@ def addOrDeleteFromContactList(owner_id):
         if request.json:
             return handler.postUserIntoContactList(owner_id, request.json)
         else:
-            return jsonify(Error="Malformed request."), 405
+            return jsonify(Error="Malformed request."), 400
     elif request.method == 'DELETE':
         if request.json:
             return handler.deleteUserFromContactList(owner_id, request.json)
         else:
-            return jsonify(Error="Malformed request."), 405
+            return jsonify(Error="Malformed request."), 400
     else:
         return jsonify(Error="Method not allowed."), 405
 
