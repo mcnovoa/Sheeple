@@ -179,10 +179,10 @@ def addOrDeleteFromContactList(owner_id):
         else:
             return jsonify(Error="Malformed request."), 400
     elif request.method == 'DELETE':
-        if request.json:
+        # if request.args:
             return handler.deleteUserFromContactList(owner_id, request.json)
-        else:
-            return jsonify(Error="Malformed request."), 400
+        # else:
+        #     return jsonify(Error="Malformed request."), 404
     else:
         return jsonify(Error="Method not allowed."), 405
 
@@ -197,8 +197,8 @@ def getAllGroupchats():
     handler = groupChatHandler()
 
     if request.method == 'POST':
-        gc_name = request.args.get('gc_name')
-        admin_id = request.args.get('admin_id')
+        gc_name = request.json['gc_name']
+        admin_id = request.json['admin_id']
         return handler.postGroupChat(gc_name, admin_id)
     elif request.args:
         return handler.searchByArgs(request.args)

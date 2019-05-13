@@ -131,7 +131,15 @@ class contactListHandler:
         param4 = json['last_name']
         param6 = json['email']
         param7 = json['phone']
-        if param3 and param4 and (param6 or param7) and owner_id:
+        # param3 = args.get('first_name')
+        # param4 = args.get('last_name')
+        # param6 = args.get('email')
+        # param7 = args.get('phone')
+        # param3 = form['first_name']
+        # param4 = form['last_name']
+        # param6 = form['email']
+        # param7 = form['phone']
+        if param3 and param4 and param6 and param7 and owner_id:
             result = dao.deleteUserIntoContactList(param3, param4, param6, param7, owner_id)
             return jsonify(DeletedContact=result)
         else:
