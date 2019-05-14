@@ -4,6 +4,18 @@ from sheepledb.dbconfig import pg_config
 
 class PostDAO:
 
+    def build_post_dict(self, row):
+        p = {}
+        p['post_id'] = row[0]
+        p['post_content'] = row[1]
+        p['post_date'] = row[2]
+        p['image_url'] = row[3]
+        p['user_id'] = row[4]
+        p['gc_id'] = row[5]
+        p['original_post'] = row[6]
+
+        return p
+
     def __init__(self):
         connection_url = "dbname=%s user=%s password=%s" % (pg_config['dbname'],
         pg_config['user'], pg_config['passwd'])
@@ -39,36 +51,31 @@ class PostDAO:
         else:
             return None
 
-    def reactPost(self, reaction_type, post_id, user_id, gc_id):
+    def reactPost(self, reaction_type, post_id, user_id):
         cursor = self.conn.cursor()
-        fq = "select * from groupchat natural inner join users natural inner join belongsto where gc_id = %s and user_id = %s;"
-        cursor.execute(fq, (gc_id, user_id,))
-        bool = cursor.fetchone()
-        ff = "select * from post where post_id = %s and gc_id = %s;"
-        cursor.execute(ff, (post_id, gc_id,))
-        boolf = cursor.fetchone()
-        if bool is not None and boolf is not None:
-            rq = "select reaction_type from reacts where post_id = %s and (reaction_type = 'like' or reaction_type = 'dislike') and user_id = %s;"
-            cursor.execute(rq, (post_id, user_id,))
-            p = cursor.fetchone()[0]
-            if p is None:
-                query = "insert into Reacts(reaction_type, post_id, user_id) values (%s, %s, %s);"
-                cursor.execute(query, (reaction_type, post_id, user_id,))
+        rq = "select reaction_type from reacts where post_id = %s and (reaction_type = 'like' or reaction_type = 'dislike') and user_id = %s;"
+        cursor.execute(rq, (post_id, user_id,))
+        p = cursor.fetchone()
+        if p is None:
+            query = "insert into Reacts(reaction_type, post_id, user_id) values (%s, %s, %s);"
+            cursor.execute(query, (reaction_type, post_id, user_id,))
+            self.conn.commit()
+            return 1
+        else:
+            p = "Select reaction_type from Reacts where post_id = %s;"
+            cursor.execute(p, (post_id,))
+            pr = cursor.fetchone()[0]
+            if(reaction_type == 'like' and pr == 'like') or (reaction_type == 'dislike' and pr == 'dislike'):
+                dq = "delete from reacts where reaction_type = %s and post_id = %s and user_id = %s;"
+                cursor.execute(dq, (reaction_type, post_id, user_id,))
+                self.conn.commit()
+                return -1
+            else:
+                lastq = 'Update reacts set reaction_type = %s where user_id = %s and post_id = %s;'
+                cursor.execute(lastq, (reaction_type, user_id, post_id,))
                 self.conn.commit()
                 return 1
-            else:
-                if(reaction_type == 'like' and  p == 'like') or (reaction_type == 'dislike' and p == 'dislike'):
-                    dq = "delete from reacts where reaction_type = %s and post_id = %s and user_id = %s;"
-                    cursor.execute(dq, (reaction_type, post_id, user_id,))
-                    self.conn.commit()
-                    return -1
-                else:
-                    lastq = 'Update reacts set reaction_type = %s where user_id = %s and post_id = %s;'
-                    cursor.execute(lastq, (reaction_type, user_id, post_id,))
-                    self.conn.commit()
-                    return 1
-        else:
-            return None
+
 
     def getAllPosts(self):
         c = self.conn.cursor()

@@ -5,6 +5,7 @@ from daos.user import UserDAO
 from handlers.groupChatHandler import groupChatHandler
 from flask import Flask, jsonify, request
 
+
 class postHandler:
     def build_post_dict(self, row):
         p = {}
@@ -156,11 +157,10 @@ class postHandler:
 
         post_id = json['post_id']
         user_id = json['user_id']
-        gc_id = json['gc_id']
 
-        if post_id is None or reaction_type is None or user_id is None or gc_id is None:
+        if post_id is None or reaction_type is None or user_id is None:
             return jsonify(Error='Must have reaction type, post id, group chat if and user id'), 400
-        p = dao.reactPost(reaction_type, post_id, user_id, gc_id)
+        p = dao.reactPost(reaction_type, post_id, user_id)
         if p == 1:
             result = self.build_post_dict(dao.getPostById(post_id))
             if reaction_type == 'like':
