@@ -95,7 +95,7 @@ class PostDAO:
 
     def getPostsByGC(self, gc_id):
         c = self.conn.cursor()
-        query = "Select P.post_id, post_content, post_date, image_url, user_id, gc_id, original from (Post as P full outer join isReply as R on P.post_id = R.reply) where P.gc_id = %s order by post_id;"
+        query = "Select P.post_id, post_content, post_date, image_url, username, user_id, gc_id, original, likes(post_id),dislikes(post_id) from (users natural inner join Post as P full outer join isReply as R on P.post_id = R.reply) where P.gc_id = %s order by post_id;"
         c.execute(query, (gc_id,))
         result = []
         for row in c:
@@ -120,23 +120,23 @@ class PostDAO:
     #         result.append(row)
     #     return result
     #
-    # def getUserWhoLikesPost(self, post_id):
-    #     c = self.conn.cursor()
-    #     query = "select post_id, username from users natural inner join reacts where post_id = %s and reaction_type = 'like';"
-    #     c.execute(query, (post_id,))
-    #     result = []
-    #     for row in c:
-    #         result.append(row)
-    #     return result
-    #
-    # def getUserWhoDislikesPost(self, post_id):
-    #     c = self.conn.cursor()
-    #     query = "select post_id, username from users natural inner join reacts where post_id = %s and reaction_type = 'dislike';"
-    #     c.execute(query, (post_id,))
-    #     result = []
-    #     for row in c:
-    #         result.append(row)
-    #     return result
+    def getUserWhoLikesPost(self, post_id):
+        c = self.conn.cursor()
+        query = "select post_id, username from users natural inner join reacts where post_id = %s and reaction_type = 'like';"
+        c.execute(query, (post_id,))
+        result = []
+        for row in c:
+            result.append(row)
+        return result
+
+    def getUserWhoDislikesPost(self, post_id):
+        c = self.conn.cursor()
+        query = "select post_id, username from users natural inner join reacts where post_id = %s and reaction_type = 'dislike';"
+        c.execute(query, (post_id,))
+        result = []
+        for row in c:
+            result.append(row)
+        return result
     #
     # def getReactionsPerDay(self, reaction_type):
     #     c = self.conn.cursor()
