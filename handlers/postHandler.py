@@ -7,6 +7,7 @@ from flask import Flask, jsonify, request
 
 
 class postHandler:
+
     def build_post_dict(self, row):
         p = {}
         p['post_id'] = row[0]
@@ -17,12 +18,28 @@ class postHandler:
         p['gc_id'] = row[5]
         p['original_post'] = row[6]
         return p
+
+    def build_posts_dict(self, row):
+        p = {}
+        p['post_id'] = row[0]
+        p['post_content'] = row[1]
+        p['post_date'] = row[2]
+        p['image_url'] = row[3]
+        p['username'] = row[4]
+        p['user_id'] = row[5]
+        p['gc_id'] = row[6]
+        p['original_post'] = row[7]
+        p['likes'] = row[8]
+        p['dislikes'] = row[9]
+        return p
+
     def build_pr_dict(self, row):
         p = {}
         p['post_id'] = row[0]
         p['post_content'] = row[1]
         p['user_id'] = row[2]
         return p
+
     def build_ps_dict(self, row):
         p = {}
         p['day'] = row[0]
@@ -39,6 +56,7 @@ class postHandler:
         p['gc_id'] = gc_id
         p['original_post'] = original_post
         return p
+
     def build_r_attributes(self, post_id, post_content, post_date, image_url, user_id, gc_id, original_post):
         p = {}
         p['post_id'] = post_id
@@ -55,6 +73,13 @@ class postHandler:
         nr['post_id'] = post_id
         nr['total'] = number_of_reactions
         return nr
+
+    def build_react_dict(self, row):
+        p = {}
+        p['reaction'] = row[0]
+        p['username'] = row[1]
+        return p
+
 
     def getAllPosts(self):
         dao = PostDAO()
@@ -141,7 +166,7 @@ class postHandler:
         gcp = dao.getPostsByGC(gc_id)
         result = []
         for a in gcp:
-            result.append(self.build_post_dict(a))
+            result.append(self.build_posts_dict(a))
         return jsonify(Posts=result)
 
     def getPostsReplies(self):

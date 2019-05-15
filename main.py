@@ -340,11 +340,20 @@ def getUsersWhoDisikesPost(post_id):
 
 
 # Like or dislike a photo posted on a chat group:
-@app.route('/Sheeple/posts/<string:reaction_type>', methods=['POST'])
-def reactPost(reaction_type):
+@app.route('/Sheeple/posts/reacts/like', methods=['POST', 'PUT'])
+def reactPostLike():
     handler = postHandler()
-    if request.method == 'POST':
-        return handler.reactPost(reaction_type, request.json)
+    if request.method == 'POST' or 'PUT' or 'DELETE':
+        return handler.reactPost('like', request.json)
+    else:
+        return jsonify(Error="Method not allowed."), 405
+
+# Like or dislike a photo posted on a chat group:
+@app.route('/Sheeple/posts/reacts/dislike', methods=['POST', 'PUT', 'DELETE'])
+def reactPostDislike():
+    handler = postHandler()
+    if request.method == 'POST' or 'PUT' or 'DELETE':
+        return handler.reactPost('dislike', request.json)
     else:
         return jsonify(Error="Method not allowed."), 405
 
