@@ -71,12 +71,35 @@ class groupChatDAO:
         cursor = self.conn.cursor()
         query = "insert into groupchat(gc_name,admin_id) values(%s,%s) returning gc_id;"
         cursor.execute(query, (gc_name, admin_id,))
-
         gid = cursor.fetchone()[0]
+        self.conn.commit()
+        return gid
 
+    def addUserToGroupChatByUsername(self, gc_id, user_id):
+        cursor = self.conn.cursor()
+        query = "insert into belongsTo(gc_id, user_id) values(%s, %s);"
+        cursor.execute(query, (gc_id, user_id))
         self.conn.commit()
 
-        return gid
+    def getUserIdByUsername(self, username):
+        cursor = self.conn.cursor()
+        query = "select user_id from users where username = %s;"
+        cursor.execute(query, (username,))
+        result = cursor.fetchone()
+        return result
+
+    def getGroupChatIdByName(self, gc_name):
+        cursor = self.conn.cursor()
+        query = "select gc_id from groupchat where gc_name = %s;"
+        cursor.execute(query, (gc_name, ))
+        result = cursor.fetchone()
+        return result
+
+    def deleteUserFromGroupChatByUsername(self, gc_id, user_id):
+        cursor = self.conn.cursor()
+        query = "delete from belongsTo where gc_id = %s and user_id = %s"
+        cursor.execute(query, (gc_id, user_id, ))
+        self.conn.commit()
 
     def deleteGroupChat(self, gc_id):
         cursor = self.conn.cursor()
