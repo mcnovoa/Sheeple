@@ -126,14 +126,24 @@ class postHandler:
         post_content = json['post_content']
         if post_content is None or post_date is None or gc_id is None or user_id is None:
             return jsonify(Error='Must have post content, groupchat id, user id and post date'), 400
-        p = daop.insertPost(post_content, post_date, image_url, user_id, gc_id)
-        if p is not None:
+        post_id = daop.insertPost(post_content, post_date, image_url, user_id, gc_id)
+        if post_id is not None:
             tag = post_content
             X = {tag.strip("#") for tag in tag.split() if tag.startswith("#")}
             for h in X:
-                daoh.postHashtag(p, h)
+                check = daoh.getHashtagByContent(h)
+
+                if len(check) == 0:
+                    hashtag_id = daoh.postHashtag(h)
+                    daoh.insertIntoHasHashtag(hashtag_id, post_id)
+                else:
+
+                    hashtag_id = daoh.getHashtagIdByContent(h)
+                    print(hashtag_id[0][0])
+                    daoh.insertIntoHasHashtag(hashtag_id[0][0], post_id)
+
             result = {}
-            result = self.build_post_attributes(p, post_content, post_date, image_url, user_id, gc_id, 'None')
+            result = self.build_post_attributes(post_id, post_content, post_date, image_url, user_id, gc_id, 'None')
             return jsonify(CreatePost=result), 201
         else:
             return jsonify(Error="User is not subscribed in this groupchat.")

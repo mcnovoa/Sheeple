@@ -62,8 +62,8 @@ class PostDAO:
             self.conn.commit()
             return 1
         else:
-            p = "Select reaction_type from Reacts where post_id = %s;"
-            cursor.execute(p, (post_id,))
+            p = "Select reaction_type from Reacts where post_id = %s and user_id = %s;"
+            cursor.execute(p, (post_id, user_id))
             pr = cursor.fetchone()[0]
             if(reaction_type == 'like' and pr == 'like') or (reaction_type == 'dislike' and pr == 'dislike'):
                 dq = "delete from reacts where reaction_type = %s and post_id = %s and user_id = %s;"
