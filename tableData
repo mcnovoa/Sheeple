@@ -1,0 +1,21 @@
+﻿﻿create table Users(user_id serial primary key, username varchar(20), password varchar(20), first_name varchar(10), last_name varchar(10), gender char(1), email varchar(50), phone char(10)) 
+
+create table ContactList(cl_id serial primary key, owner_id integer references Users(user_id)) 
+
+create table IsPart(cl_id integer references ContactList(cl_id), user_id integer references Users(user_id), primary key(cl_id, user_id)) 
+
+create table Hashtag(hashtag_id serial primary key, hashtag_content varchar(150)) 
+
+create table HasHashtag(hashtag_id integer references Hashtag(hashtag_id), post_id integer references Post(post_id), primary key (hashtag_id, post_id)) 
+
+create table GroupChat (gc_id serial primary key, gc_name varchar(20), admin_id integer references Users(user_id)) 
+
+create table Images(image_id serial primary key, image_url varchar(300), post_id integer references Post(post_id)) 
+
+create table Post(post_id serial primary key, post_Content varchar(150), gc_id integer references GroupChat(gc_id), user_id integer references Users(user_id), post_date char(10))
+
+create table BelongsTo(gc_id integer references GroupChat(gc_id), user_id integer references Users(user_id), primary key(gc_id, user_id)) 
+
+create table Reacts(user_id integer references Users(user_id), post_id integer references Post(post_id), reaction_type varchar(10)) 
+
+Create table isReply(original integer references Post(post_id), reply integer references Post(post_id), primary key(original, reply)) 
