@@ -33,6 +33,19 @@ class postHandler:
         p['dislikes'] = row[9]
         return p
 
+    def build_posts_dict2(self, row):
+        p = {}
+        p['post_id'] = row[0]
+        p['post_content'] = row[1]
+        p['post_date'] = row[2]
+        p['image_url'] = row[3]
+        p['username'] = row[4]
+        p['user_id'] = row[5]
+        p['gc_id'] = row[6]
+        p['likes'] = row[7]
+        p['dislikes'] = row[8]
+        return p
+
     def build_pr_dict(self, row):
         p = {}
         p['post_id'] = row[0]
@@ -139,7 +152,6 @@ class postHandler:
                 else:
 
                     hashtag_id = daoh.getHashtagIdByContent(h)
-                    print(hashtag_id[0][0])
                     daoh.insertIntoHasHashtag(hashtag_id[0][0], post_id)
 
             result = {}
@@ -159,14 +171,23 @@ class postHandler:
         original_post = json['original_post']
         if post_content is None or post_date is None or gc_id is None or user_id is None or original_post is None:
             return jsonify(Error='Must have post content, groupchat id, user id, post date and original post'), 400
-        p = daop.insertReply(post_content, post_date, image_url, user_id, gc_id, original_post)
-        if p is not None:
+        post_id = daop.insertReply(post_content, post_date, image_url, user_id, gc_id, original_post)
+        if post_id is not None:
             tag = post_content
             X = {tag.strip("#") for tag in tag.split() if tag.startswith("#")}
             for h in X:
-                daoh.postHashtag(p, h)
+                check = daoh.getHashtagByContent(h)
+
+                if len(check) == 0:
+                    hashtag_id = daoh.postHashtag(h)
+                    daoh.insertIntoHasHashtag(hashtag_id, post_id)
+                else:
+
+                    hashtag_id = daoh.getHashtagIdByContent(h)
+                    daoh.insertIntoHasHashtag(hashtag_id[0][0], post_id)
+
             result = {}
-            result = self.build_post_attributes(p, post_content, post_date, image_url, user_id, gc_id, original_post)
+            result = self.build_post_attributes(post_id, post_content, post_date, image_url, user_id, gc_id, original_post)
             return jsonify(ReplyPost=result), 201
         else:
             return jsonify(Error="User is not subscribed in this groupchat.")
@@ -176,8 +197,17 @@ class postHandler:
         gcp = dao.getPostsByGC(gc_id)
         result = []
         for a in gcp:
-            result.append(self.build_posts_dict(a))
+            result.append(self.build_posts_dict2(a))
         return jsonify(Posts=result)
+
+    def getRepliesByOriginal(self, original):
+        dao = PostDAO()
+        replies = dao.getRepliesByOriginal(original)
+        result = []
+
+        for row in replies:
+            result.append(self.build_posts_dict(row))
+        return jsonify(Replies=result)
 
     def getPostsReplies(self):
         dao = PostDAO()

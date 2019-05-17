@@ -152,9 +152,7 @@ class groupChatHandler:
     def addUserToGroupChatByUsername(self, gc_id, username):
 
         dao = groupChatDAO()
-
         user_id = dao.getUserIdByUsername(username)
-
         dao.addUserToGroupChatByUsername(gc_id, user_id)
 
         return jsonify(User="Success")
@@ -162,9 +160,7 @@ class groupChatHandler:
     def deleteUserFromGroupChatByUsername(self, gc_id, username):
 
         dao = groupChatDAO()
-
         user_id = dao.getUserIdByUsername(username)
-
         dao.deleteUserFromGroupChatByUsername(gc_id, user_id)
 
         return jsonify(User="Success")

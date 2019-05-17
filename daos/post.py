@@ -95,14 +95,28 @@ class PostDAO:
 
     def getPostsByGC(self, gc_id):
         c = self.conn.cursor()
-        query = "Select P.post_id, post_content, post_date, image_url, username, user_id, gc_id, original, likes(post_id),dislikes(post_id) from (users natural inner join Post as P full outer join isReply as R on P.post_id = R.reply) where P.gc_id = %s order by post_id;"
+        query = " Select P.post_id, post_content, post_date, image_url, username, user_id, gc_id, likes(post_id), dislikes(post_id) from(users natural inner join Post as P) where P.gc_id = %s " \
+                " except select P.post_id, post_content, post_date, image_url, username, user_id, gc_id, likes(post_id), dislikes(post_id) from users natural inner join post as P inner join isreply " \
+                "as R on P.post_id = R.reply order by post_id, post_date;"
         c.execute(query, (gc_id,))
         result = []
         for row in c:
             result.append(row)
         return result
 
-    # def getPostsPerDay(self):
+
+
+    def getRepliesByOriginal(self, original):
+        cursor = self.conn.cursor()
+        query ="select P.post_id, post_content, post_date, image_url, username, user_id, gc_id, original,  likes(post_id), dislikes(post_id) from users natural inner join post as P inner join isreply as R on P.post_id = R.reply where R.original = %s order by post_id;"
+        cursor.execute(query, (original, ))
+        result = []
+        for row in cursor:
+            result.append(row)
+        return result
+
+
+# def getPostsPerDay(self):
     #     c = self.conn.cursor()
     #     query = "Select P.post_date, count(*) from Post as P group by P.post_date order by post_date;"
     #     c.execute(query)
