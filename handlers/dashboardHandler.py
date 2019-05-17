@@ -16,6 +16,13 @@ class dashboardHandler:
         p['total'] = row[1]
         return p
 
+    def build_mau_dict(self, row):
+        p = {}
+        p['day'] = row[0]
+        p['most active user'] = row[1]
+        p['total'] = row[2]
+        return p
+
     def build_dashboard_dict(self, row):
         hashtag = {}
         hashtag['Hashtag'] = row[0]
@@ -71,7 +78,7 @@ class dashboardHandler:
         pts = dao.mostActiveUsersPerDay()
         result = []
         for a in pts:
-            result.append(self.build_ps_dict(a))
+            result.append(self.build_mau_dict(a))
         return jsonify(MostActiveUsersPerDay=result)
 
 

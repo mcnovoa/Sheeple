@@ -74,7 +74,7 @@ class DashboardDAO:
 
     def mostActiveUsersPerDay(self):
         c = self.conn.cursor()
-        query = "Select number_of_post.post_date, max(number_of_post.c) from (Select users.user_id, count(*) as c, post_date from Users inner join Post on post.user_id = users.user_id group by users.user_id, post_date) as number_of_post inner join Users on number_of_post.user_id = users.user_id group by post_date order by post_date;"
+        query = "Select f.post_date, f.Most_Active_User, f.Number_of_Posts from (Select number_of_post.post_date, username as Most_Active_User, max(number_of_post.c) as Number_of_Posts from (Select users.user_id, count(*) as c, post_date from Users inner join Post on post.user_id = users.user_id group by users.user_id, post_date) as number_of_post inner join Users on number_of_post.user_id = users.user_id group by post_date, username order by post_date) as f order by f.Number_of_Posts desc, f.post_date ;"
         c.execute(query)
         result = []
         for row in c:
