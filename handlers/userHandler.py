@@ -96,28 +96,6 @@ class userHandler:
         else:
             return jsonify(Error="Unexpected attributes in post request"), 400
 
-    # def updateUser(self, user_id, json):
-    #     dao = UserDAO()
-    #     if dao.getUserByID(user_id):
-    #         param0 = json['user_id']
-    #         param1 = json['username']
-    #         param2 = json['password']
-    #         param3 = json['first_name']
-    #         param4 = json['last_name']
-    #         param5 = json['gender']
-    #         param6 = json['email']
-    #         param7 = json['phone']
-    #         if param0 != user_id:
-    #             return jsonify(Error="User_id does not match"), 400
-    #         elif param0 and param1 and param2 and param3 and param4 and param5 and param6 and param7:
-    #             result = self.build_user_attributes(param0, param1, param2, param3, param4, param5, param6, param7)
-    #             return jsonify(UpdateStatus=result), 201
-    #         else:
-    #             return jsonify(Error="Unexpected attributes in post request"), 400
-    #         return jsonify(UpdateStatus="OK"), 200
-    #     else:
-    #         return jsonify(Error="User not found."), 404
-
 
     # def deleteUser(self, user_id):
     #     dao = UserDAO()

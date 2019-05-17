@@ -104,9 +104,6 @@ class contactListDAO:
 
     def deleteUserIntoContactList(self, user_id, owner_id):
         cursor = self.conn.cursor()
-        # query = "select user_id from users where first_name=%s and last_name=%s and (email=%s or phone=%s);"
-        # cursor.execute(query, (fi,))
-        # user_id = cursor.fetchone()[0]
         query = "select cl_id from ContactList where owner_id = %s;"
         cursor.execute(query, (owner_id,))
         cl_id = cursor.fetchone()

@@ -22,7 +22,7 @@ def welcomesheeple():
 @app.route("/Sheeple/register", methods=['POST'])
 def register():
     if request.method =='POST':
-        return userHandler().createUser(request.json    )
+        return userHandler().createUser(request.json)
 
 # Login page
 @app.route("/Sheeple/login", methods=['POST'])
@@ -105,45 +105,7 @@ def getNumOfReactions(post_id, reaction_type):
         return jsonify(Error="Method not allowed."), 405
 
 
-
-# # ------------------- ----Second Phase-------------------------#
-#
-@app.route('/Sheeple/posts', methods=['GET'])
-def getAllPosts():
-    handler = postHandler()
-
-    if request.method == 'GET':
-        return handler.getAllPosts()
-    else:
-        return jsonify(Error="Method not allowed."), 405
-
-
-@app.route('/Sheeple/contactlists/user/<int:user_id>', methods=['GET'])
-def getContactListByUser_id(user_id):
-    handler = contactListHandler()
-    if request.method == 'GET':
-        return handler.getContactListByOwnerId(user_id)
-    else:
-        return jsonify(Error="Method not allowed."), 405
-
-
-@app.route('/Sheeple/posts/groupchat/<int:gc_id>', methods=['GET'])
-def doByPostGC(gc_id):
-    handler = postHandler()
-    if request.method == 'GET':
-        return handler.getPostsByGC(gc_id)
-    else:
-        return jsonify(Error="Method not allowed."), 405
-
-
-@app.route('/Sheeple/groupchats/owner/<int:gc_id>', methods= ['GET'])
-def getGroupChatByOwner(gc_id):
-    handler = groupChatHandler()
-
-    if request.method == 'GET':
-        return handler.getGroupChatByOwner(gc_id)
-    else:
-        return jsonify(Error="Method not allowed"), 405
+# -------------------End Dashboard----------------------------#
 
 
 # --------------------Start Contact Lists----------------------#
@@ -169,7 +131,6 @@ def doContactListById(cl_id):
         return jsonify(Error="Method not allowed."), 405
 
 
-# Add or Delete Contact from contact list of user X
 @app.route('/Sheeple/contactlists/<int:owner_id>/user', methods=['POST'])
 def addToContactList(owner_id):
     handler = contactListHandler()
@@ -191,6 +152,15 @@ def deleteFromContactList(owner_id, user_id):
             return handler.deleteUserFromContactList(owner_id, user_id)
         else:
             return jsonify(Error="Malformed request."), 400
+    else:
+        return jsonify(Error="Method not allowed."), 405
+
+
+@app.route('/Sheeple/contactlists/user/<int:user_id>', methods=['GET'])
+def getContactListByOwner_id(user_id):
+    handler = contactListHandler()
+    if request.method == 'GET':
+        return handler.getContactListByOwnerId(user_id)
     else:
         return jsonify(Error="Method not allowed."), 405
 
@@ -274,6 +244,16 @@ def getGroupchatsForUser(user_id):
     handler = groupChatHandler()
     if request.method == 'GET':
         return handler.getGroupChatsForUser(user_id)
+    else:
+        return jsonify(Error="Method not allowed"), 405
+
+
+@app.route('/Sheeple/groupchats/owner/<int:gc_id>', methods= ['GET'])
+def getGroupChatByOwner(gc_id):
+    handler = groupChatHandler()
+
+    if request.method == 'GET':
+        return handler.getGroupChatByOwner(gc_id)
     else:
         return jsonify(Error="Method not allowed"), 405
 
@@ -383,6 +363,25 @@ def replyPost():
     handler = postHandler()
     if request.method == 'POST':
         return handler.replyPost(request.json)
+    else:
+        return jsonify(Error="Method not allowed."), 405
+
+
+@app.route('/Sheeple/posts', methods=['GET'])
+def getAllPosts():
+    handler = postHandler()
+
+    if request.method == 'GET':
+        return handler.getAllPosts()
+    else:
+        return jsonify(Error="Method not allowed."), 405
+
+
+@app.route('/Sheeple/posts/groupchat/<int:gc_id>', methods=['GET'])
+def doByPostGC(gc_id):
+    handler = postHandler()
+    if request.method == 'GET':
+        return handler.getPostsByGC(gc_id)
     else:
         return jsonify(Error="Method not allowed."), 405
 

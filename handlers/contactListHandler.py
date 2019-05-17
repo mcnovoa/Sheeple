@@ -127,14 +127,6 @@ class contactListHandler:
 
     def deleteUserFromContactList(self, owner_id, user_id):
         dao = contactListDAO()
-        # param3 = args.get('first_name')
-        # param4 = args.get('last_name')
-        # param6 = args.get('email')
-        # param7 = args.get('phone')
-        # param3 = form['first_name']
-        # param4 = form['last_name']
-        # param6 = form['email']
-        # param7 = form['phone']
         if user_id and owner_id:
             result = dao.deleteUserIntoContactList(user_id, owner_id)
             return jsonify(DeletedContact=result)
