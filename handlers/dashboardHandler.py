@@ -31,7 +31,7 @@ class dashboardHandler:
         for row in result:
             mapped_result.append(self.build_dashboard_dict(row))
 
-        return jsonify(Hashtag = mapped_result), 200
+        return jsonify(Hashtag=mapped_result), 200
 
     def getPostsPerDay(self):
         dao = DashboardDAO()
