@@ -1,5 +1,8 @@
-from flask import Flask, jsonify, request
 from flask_cors import CORS
+from flask import send_from_directory
+import os
+from flask import Flask, flash, request, redirect, url_for, jsonify
+from werkzeug.utils import secure_filename
 
 from handlers.contactListHandler import contactListHandler
 from handlers.groupChatHandler import groupChatHandler
@@ -8,13 +11,17 @@ from handlers.postHandler import postHandler
 from handlers.userHandler import userHandler
 from handlers.dashboardHandler import dashboardHandler
 app = Flask(__name__)
-
+app.secret_key = b'_5#y2xaswjhL"F4Q8z\n\xec]/'
 CORS(app)
 
 
 @app.route('/')
 def welcomesheeple():
     return 'Sheeple!'
+
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
+
 
 # ---------------------Login & Register-------------------------#
 
@@ -104,10 +111,51 @@ def getNumOfReactions(post_id, reaction_type):
     else:
         return jsonify(Error="Method not allowed."), 405
 
+#-----------------------Manangement of Images--------------------#
+
+@app.route('/Sheeple/images/<string:path>', methods= ['GET'])
+def getImage(path):
+    return send_from_directory('static', path)
 
 
-# # ------------------- ----Second Phase-------------------------#
-#
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+@app.route('/Sheeple/images', methods=['POST'])
+def upload():
+    if request.method == 'POST':
+        if 'file' in request.files:
+            file = request.files['file']
+            if file and allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                file.save(os.path.join(app.config['static'], filename))
+                return jsonify(filename)
+            else:
+                return jsonify('No file found or not allowed'), 400
+        else:
+            return jsonify('No file in request'), 400
+# def upload_file():
+#     if request.method == 'POST':
+#         # check if the post request has the file part
+#         if 'file' not in request.files:
+#             flash('No file part')
+#             return redirect(request.url)
+#         file = request.files['file']
+#         # if user does not select file, browser also
+#         # submit an empty part without filename
+#         if file.filename == '':
+#             return jsonify("FAIL"), 410
+#         if file and allowed_file(file.filename
+#                                  ):
+#             filename = file.filename
+#             file.save(os.path.join(app.config['static'], filename))
+#             return jsonify("SUCCESS"), 200
+#     return jsonify("FAIL"), 410
+
+#---------------------- ----Second Phase-------------------------#
+
 @app.route('/Sheeple/posts', methods=['GET'])
 def getAllPosts():
     handler = postHandler()
@@ -322,7 +370,7 @@ def getHashtagById(id):
 def addPost():
     handler = postHandler()
     if request.method == 'POST':
-        return handler.createPost(request.get_json())
+        return handler.createPost(request.get_json(), request.files['file'])
     else:
         return jsonify(Error="Method not allowed."), 405
 
