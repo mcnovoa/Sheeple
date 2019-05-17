@@ -9,6 +9,14 @@ class DashboardDAO:
         pg_config['user'], pg_config['passwd'])
         self.conn = psycopg2._connect(connection_url)
 
+
+    def getPostById(self, post_id):
+        c = self.conn.cursor()
+        query = "Select P.post_id, post_content, post_date, image_url, user_id, gc_id, original from (Post as P full outer join isReply as R on P.post_id = R.reply)  where P.post_id = %s order by post_id;"
+        c.execute(query, (post_id,))
+        result = c.fetchone()
+        return result
+
     def getPopularHashtags(self):
         cursor = self.conn.cursor()
         query = "select hashtag_content, count(*) as count from hashashtag natural inner join hashtag group by hashtag_content order by count desc;"
@@ -84,7 +92,7 @@ class DashboardDAO:
 
     def getnumRepliesOfPost(self, post_id):
         c = self.conn.cursor()
-        query = "Select post_id, count(*) from Post inner join isReply on post.post_id = isreply.original where post_id = 5 group by post_id;"
+        query = "Select post_id, count(*) from Post inner join isReply on post.post_id = isreply.original where post_id = %s group by post_id;"
         c.execute(query, (post_id,))
         result = []
         for row in c:
